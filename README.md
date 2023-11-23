@@ -2,5 +2,3 @@
 
 Arthur Delannoy
 Rayane Boukef
-
-
