@@ -1,9 +1,46 @@
-1-
-2-
-3-
-4-
-5-
-6-
-7-
-8-
-9-
+Le projet "My first chatBot" est un projet de programmation Python axé sur l'analyse de texte et la création d'un chatbot capable de répondre à des questions en utilisant la méthode TF-IDF pour analyser la fréquence des mots dans un corpus de textes. Voici une liste détaillée des tâches à accomplir pour ce projet :
+
+Partie I : Développement de fonctions de base
+Base de données de fichiers :
+
+Analyser 8 fichiers texte de discours de présidents français.
+Nommer et organiser ces fichiers dans un répertoire "discours".
+Fonctions de base :
+
+Extraire et afficher les noms des présidents à partir des noms de fichiers.
+Associer un prénom à chaque président.
+Convertir les textes en minuscules et enregistrer dans un nouveau dossier "nettoyé".
+Supprimer la ponctuation et séparer le texte en mots.
+Organisation du code :
+
+Écrire des fonctions pour l'analyse de fichiers texte, en utilisant des modules pré-définis et le module "os".
+Partie II : Calcul de la matrice de similarité et génération de réponses automatiques
+Méthode TF-IDF :
+
+Comprendre et implémenter la méthode TF-IDF pour représenter les mots comme des vecteurs numériques.
+Fonctions avancées :
+
+Créer une matrice TF-IDF pour l'ensemble des documents.
+Écrire des fonctions pour calculer le score TF-IDF de chaque mot.
+Programmes basés sur les fonctions TF-IDF :
+
+Identifier les mots les moins importants dans le corpus.
+Trouver le(s) mot(s) avec le score TF-IDF le plus élevé.
+Analyser les discours des présidents pour des mots ou thèmes spécifiques.
+Programme principal :
+
+Créer un menu utilisateur pour accéder aux différentes fonctionnalités.
+Intégrer toutes les fonctions précédentes dans un programme principal.
+Partie III : Généralisation de l'application
+Extension du champ d'application :
+
+Adapter l'application pour couvrir divers thèmes et types de textes.
+Développement continu :
+
+Améliorer et peaufiner l'application en fonction des retours et des tests.
+Soumission et évaluation
+Suivre les dates clés pour les soumissions et les sessions de suivi.
+Préparer un rapport détaillé du projet et un fichier README pour l'exécution.
+Collaborer via Git pour le suivi du travail d'équipe.
+Préparer la défense du projet.
+Ce projet combine l'analyse de texte, la programmation Python, et le développement d'une interface utilisateur pour créer un chatbot intelligent. Il nécessite une compréhension approfondie de la manipulation de texte, des structures de données, et de la méthode TF-IDF
