@@ -1,7 +1,7 @@
 from function import*
 
 if __name__ == '__main__':
-    files_names = list_of_files("speeches-20231116", ".txt")
+    files_names = list_of_files(".txt", "speeches-20231116")
     print(files_names)
     president_names = []
     for file_name in files_names:
