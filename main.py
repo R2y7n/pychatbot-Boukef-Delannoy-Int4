@@ -1,7 +1,7 @@
 from function import*
 
 if __name__ == '__main__':
-    files_names = list_of_files(".txt", "speeches-20231116")
+    files_names = list_of_files("speeches", ".txt")
     print(files_names)
     president_names = []
     for file_name in files_names:
@@ -10,7 +10,7 @@ if __name__ == '__main__':
             charcacter = charcacter + 1
         charcacter = charcacter + 1
         name = ""
-        chiffres = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "."]
+        chiffres = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "."]
         while file_name[charcacter] not in chiffres:
             name = name + file_name[charcacter]
             charcacter = charcacter + 1
