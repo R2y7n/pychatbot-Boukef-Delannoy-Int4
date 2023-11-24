@@ -2,7 +2,7 @@ import os
 from typing import TextIO
 
 
-def list_of_files(extension: object, directory: object) -> object:
+def list_of_files(extension, directory):
     files_names = []
     for filename in os.listdir(directory):
         if filename.endswith(extension):
