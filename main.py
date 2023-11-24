@@ -1,3 +1,5 @@
+import os.path
+
 from function import *
 
 if '__main__' == __name__:
@@ -17,3 +19,5 @@ if '__main__' == __name__:
             print(name)
         president_names.append(name)
     print(president_names)
+
+lower_case_convert("txt", os.path.dirname('speeches-20231116'))
