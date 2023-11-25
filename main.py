@@ -19,3 +19,8 @@ if '__main__' == __name__:
             print(name)
         president_names.append(name)
     print(president_names)
+
+original_text = "Salut comme çcava @!:;,@@{]@@^#"
+clean_text = tkoff_ponctuation(original_text)
+
+print(clean_text)

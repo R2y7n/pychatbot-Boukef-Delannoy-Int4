@@ -10,8 +10,8 @@ def list_of_files(extension, directory):
     return files_names
 
 def lower_case_convert(extension, directory):
-    if not os.path.exists('cleaned'):
-        os.makedirs('cleaned')
+    if not os.path.exists('speeches-20231116/cleaned'):
+        os.makedirs('speeches-20231116/cleaned')
 
     text_lower = text.lower()
 
@@ -20,28 +20,47 @@ def lower_case_convert(extension, directory):
         file.write(text_lower)
 
 
-def retirer_ponctuation(string):
+def tkoff_ponctuation(string):
     """Retire les ponctuations d'une chaîne de caractères"""
 
-    if not string.isalpha():
-        #On retire tous les caractères avant les majuscule (65) dans la table ascii
-        for i in range(65):
-            if chr(i) in string:
-                string = string.replace(chr(i), "")
+    # On retire tous les caractères non alphabétiques selon la table ASCII
+    for i in range(32):
+        string = string.replace(chr(i), "")
 
-        for i in range(91, 97):
-            if chr(i) in string:
-                string = string.replace(chr(i), "")
+    for i in range(33, 65):
+        string = string.replace(chr(i), "")
 
-        for i in range(123, 128):
-            if chr(i) in string:
-                string = string.replace(chr(i), "")
+    for i in range(91, 97):
+        string = string.replace(chr(i), "")
 
-        for i in range(128, 192):
-            if chr(i) in string:
-                string = string.replace(chr(i), "")
+    for i in range(123, 127):
+        string = string.replace(chr(i), "")
 
-        if chr(8217) in string:
-            string = string.replace(chr(8217), "")
+    # Gestion des caractères spéciaux au-delà de la plage ASCII standard
+    for i in range(128, 256):
+        string = string.replace(chr(i), "")
 
     return string
+
+
+
+#j'ai écris les fonctions grossièrement comme ça
+def sort_files_by_extension(directory):
+    for file in os.listdir(directory):
+        if os.path.isfile(os.path.join(directory, file)):
+            extension = file.split('.')[-1]
+            extension_dir = os.path.join(directory, extension)
+            if not os.path.exists(extension_dir):
+                os.makedirs(extension_dir)
+            os.rename(os.path.join(directory, file), os.path.join(extension_dir, file))
+
+
+
+import os
+from datetime import datetime
+
+def rename_files_with_date(directory, prefix=""):
+    for file in os.listdir(directory):
+        if os.path.isfile(os.path.join(directory, file)):
+            new_name = prefix + datetime.now().strftime("%Y%m%d_") + file
+            os.rename(os.path.join(directory, file), os.path.join(directory, new_name))
