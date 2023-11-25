@@ -56,13 +56,21 @@ def lower_case_convert(file, filename):
     lower_cased_file.close()
 
 def remove_punctuation(file, filename):
-    """create a copy of a file without any form of punctuation of symbol"""
+    """create a copy of a file without any form of punctuation, number or symbol"""
     texte = file.readlines()
+    after_space = True
     punctuation_removed_file = open("cleaned\\" + "cleaned_" + filename, "w")
     for lines in texte:
         for character in lines:
-            if ord(character) <= 31 or 33 <= ord(character) <= 47 or 58 <= ord(character) <= 64 or 91 <= ord(character) <= 96 or 123 <= ord(character) <= 127:
-                punctuation_removed_file.write(" ")
+            if ord(character) <= 31 or 33 <= ord(character) <= 64 or 91 <= ord(character) <= 96 or 123 <= ord(character) <= 127:
+                if after_space == False:
+                    punctuation_removed_file.write(" ")
+                    after_space = True
+            elif ord(character) <= 32:
+                if after_space == False:
+                    punctuation_removed_file.write(character)
+                    after_space = True
             else:
                 punctuation_removed_file.write(character)
+                after_space = False
     punctuation_removed_file.close()
