@@ -20,4 +20,7 @@ if '__main__' == __name__:
         president_names.append(name)
     print(president_names)
 
-lower_case_convert("txt", os.path.dirname('speeches-20231116'))
+original_text = "Salut comme çcava @!:;,@@{]@@^#"
+clean_text = tkoff_ponctuation(original_text)
+
+print(clean_text)
