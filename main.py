@@ -8,6 +8,8 @@ if __name__ == '__main__':
     print(president_names)
     """if the code has already been executed no need to execute it again"""
     if not os.path.exists("cleaned"):
-        directory = create_cleaned_files(directory)
+        clean_directory = create_cleaned_files(directory)
     else:
-        directory = "./cleaned"
+        clean_directory = "./cleaned"
+    tf_idf = tf_idf_of_directory(clean_directory)
+    print(tf_idf)
