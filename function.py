@@ -1,66 +1,68 @@
 import os
-from typing import TextIO
 
-
-def list_of_files(extension, directory):
+def list_of_files(directory, extension):
+    """create a list containing the files names"""
     files_names = []
     for filename in os.listdir(directory):
         if filename.endswith(extension):
             files_names.append(filename)
     return files_names
 
-def lower_case_convert(extension, directory):
-    if not os.path.exists('speeches-20231116/cleaned'):
-        os.makedirs('speeches-20231116/cleaned')
+def president_name(files_names):
+    """create a list containing the names of the presidents"""
+    president_names = []
+    for file_name in files_names:
+        name = ""
+        character = 11
+        while ord(file_name[character]) == 32 or 65 <= ord(file_name[character]) <= 90 or 97 <= ord(file_name[character]) <= 122:
+            name = name + file_name[character]
+            character = character + 1
+        if name not in president_names:
+            president_names.append(name)
+    return president_names
 
-    text_lower = text.lower()
+def create_cleaned_files(directory):
+    """create a cleaned repository with cleaned copies of the files of the original repository within it"""
+    if not os.path.exists("cleaned"):
+        os.mkdir("cleaned")
+    for filename in os.listdir(directory):
+        file = open("speeches\\" + filename, "r")
+        cleaned_file = open("cleaned\\" + filename, "w")
+        cleaned_file.write(file.read())
+        file.close()
+        cleaned_file.close()
+    for filename in os.listdir("./cleaned"):
+        if not os.path.exists("cleaned\\" + "cleaned_" + filename):
+            file = open("cleaned\\" + filename, "r")
+            lower_case_convert(file, filename)
+            file.close()
+            os.remove("cleaned\\" + filename)
+            file = open("cleaned\\" + "lower_casely_cleaned_" + filename, "r")
+            remove_punctuation(file, filename)
+            file.close()
+            os.remove("cleaned\\" + "lower_casely_cleaned_" + filename)
+    return "./cleaned"
 
-    file: TextIO
-    with open('cleaned/' + text_lower + '.txt', 'w') as file:
-        file.write(text_lower)
+def lower_case_convert(file, filename):
+    """create a copy of a file with all capital letters convert to lower case"""
+    texte = file.readlines()
+    lower_cased_file = open("cleaned\\" + "lower_casely_cleaned_" + filename, "w")
+    for lines in texte:
+        for character in lines:
+            if 65 <= ord(character) <= 90:
+                lower_cased_file.write(chr(ord(character) + 32))
+            else:
+                lower_cased_file.write(character)
+    lower_cased_file.close()
 
-
-def tkoff_ponctuation(string):
-    """Retire les ponctuations d'une chaîne de caractères"""
-
-    # On retire tous les caractères non alphabétiques selon la table ASCII
-    for i in range(32):
-        string = string.replace(chr(i), "")
-
-    for i in range(33, 65):
-        string = string.replace(chr(i), "")
-
-    for i in range(91, 97):
-        string = string.replace(chr(i), "")
-
-    for i in range(123, 127):
-        string = string.replace(chr(i), "")
-
-    # Gestion des caractères spéciaux au-delà de la plage ASCII standard
-    for i in range(128, 256):
-        string = string.replace(chr(i), "")
-
-    return string
-
-
-
-#j'ai écris les fonctions grossièrement comme ça
-def sort_files_by_extension(directory):
-    for file in os.listdir(directory):
-        if os.path.isfile(os.path.join(directory, file)):
-            extension = file.split('.')[-1]
-            extension_dir = os.path.join(directory, extension)
-            if not os.path.exists(extension_dir):
-                os.makedirs(extension_dir)
-            os.rename(os.path.join(directory, file), os.path.join(extension_dir, file))
-
-
-
-import os
-from datetime import datetime
-
-def rename_files_with_date(directory, prefix=""):
-    for file in os.listdir(directory):
-        if os.path.isfile(os.path.join(directory, file)):
-            new_name = prefix + datetime.now().strftime("%Y%m%d_") + file
-            os.rename(os.path.join(directory, file), os.path.join(directory, new_name))
+def remove_punctuation(file, filename):
+    """create a copy of a file without any form of punctuation of symbol"""
+    texte = file.readlines()
+    punctuation_removed_file = open("cleaned\\" + "cleaned_" + filename, "w")
+    for lines in texte:
+        for character in lines:
+            if ord(character) <= 31 or 33 <= ord(character) <= 47 or 58 <= ord(character) <= 64 or 91 <= ord(character) <= 96 or 123 <= ord(character) <= 127:
+                punctuation_removed_file.write(" ")
+            else:
+                punctuation_removed_file.write(character)
+    punctuation_removed_file.close()
