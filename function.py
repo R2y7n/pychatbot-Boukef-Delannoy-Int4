@@ -12,19 +12,20 @@ def list_of_files(directory, extension):
 
 def authors_names(files_names):
     """create a list containing the names of the authors"""
-    president_names = []
+    list_authors_names = []
     for file_name in files_names:
         name = ""
         character = 11
         while ord(file_name[character]) == 32 or 65 <= ord(file_name[character]) <= 90 or 97 <= ord(file_name[character]) <= 122:
             name = name + file_name[character]
             character = character + 1
-        if name not in president_names:
-            president_names.append(name)
-    return president_names
+        if name not in list_authors_names:
+            list_authors_names.append(name)
+    return list_authors_names
 
-def authors_names_by_dates(list_authors_names, dates_of_authors):
+def authors_names_by_dates(files_names, dates_of_authors):
     """sort the list containing the names of the authors by dates"""
+    list_authors_names = authors_names(files_names)
     for tested_name in range(len(list_authors_names) - 1):
         for name in range(tested_name + 1, len(list_authors_names)):
             if dates_of_authors[list_authors_names[name]] < dates_of_authors[list_authors_names[tested_name]]:
@@ -122,6 +123,7 @@ def idf_of_directory(tf):
 def tf_idf_of_directory(directory):
     """create a dictionary containing the TF-IDF (Term Frequency-Inverse Document Frequency) of the directory"""
     """it would probably be better for the following functions to have the TF-IDF as a matrix instead of a dictionary"""
+    """it would be great to have it sorted by dates of documents"""
     tf_idf = {}
     tf = tf_of_directory(directory)
     idf = idf_of_directory(tf)
@@ -131,11 +133,11 @@ def tf_idf_of_directory(directory):
             tf_idf[filename][word] = tf[filename][word]*idf[word]
     return tf_idf
 
-def groups_of_files_by_name(directory, list_of_names):
+def groups_of_files_by_name(file_names, list_of_names):
     """create a dictionary containing lists of files grouped by name of the author"""
     groups_of_files = {}
-    for filename in os.listdir(directory):
-        for name in list_of_names:
+    for name in list_of_names:
+        for filename in file_names:
             if name in filename:
                 if name not in groups_of_files:
                     groups_of_files[name] = [filename]
@@ -231,35 +233,34 @@ def most_repeated_words_in_group_of_files(groups_of_files, name_of_groupe):
             most_repeated_words = [word]
     return most_repeated_words
 
-def groups_of_files_using_word(groups_of_files, names, target_word):
+def groups_of_files_using_word(groups_of_files, target_word):
     """create two lists, the first one containing all the groups of files using the target word and the second one the groups of files using it the most"""
     """if after_space is remove from remove_punctuation don't forget to adapt here too"""
-    occurrences_by_group_of_files = []
-    for number_group_of_files in range(len(names)):
-        occurrences_by_group_of_files.append(0)
-        for filename in groups_of_files[names[number_group_of_files]]:
+    occurrences_by_group_of_files = {}
+    for group_of_files in groups_of_files:
+        for filename in groups_of_files[group_of_files]:
             file = open("cleaned\\" + filename, "r", encoding = "utf-8")
             words = words_of_file(file)
             file.close()
             for word in range(len(words) - 1):
                 if words[word] == target_word:
-                    occurrences_by_group_of_files[number_group_of_files] = occurrences_by_group_of_files[number_group_of_files] + 1
+                    occurrences_by_group_of_files[group_of_files] = occurrences_by_group_of_files.get(group_of_files, 0) + 1
     groups_of_files_using_target_word = []
     most_repeated = []
     most_repeated_occurrences = 0
-    for number_group_of_files in range(len(occurrences_by_group_of_files)):
-        if occurrences_by_group_of_files[number_group_of_files] != 0:
-            groups_of_files_using_target_word.append(names[number_group_of_files])
-            if occurrences_by_group_of_files[number_group_of_files] == most_repeated_occurrences:
-                most_repeated.append(names[number_group_of_files])
-            elif occurrences_by_group_of_files[number_group_of_files] > most_repeated_occurrences:
-                most_repeated_occurrences = occurrences_by_group_of_files[number_group_of_files]
-                most_repeated = [names[number_group_of_files]]
+    for group_of_files in groups_of_files:
+        if group_of_files in occurrences_by_group_of_files:
+            groups_of_files_using_target_word.append(group_of_files)
+            if occurrences_by_group_of_files[group_of_files] == most_repeated_occurrences:
+                most_repeated.append(occurrences_by_group_of_files[group_of_files])
+            elif occurrences_by_group_of_files[group_of_files] > most_repeated_occurrences:
+                most_repeated_occurrences = occurrences_by_group_of_files[group_of_files]
+                most_repeated = [group_of_files]
     return groups_of_files_using_target_word, most_repeated
 
-def first_to_use(groups_of_files, names, target_word):
+def first_to_use(groups_of_files, target_word):
     """return the name of the first author using the target word if there is one and None if there is none"""
-    presidents_using_target_word = groups_of_files_using_word(groups_of_files, names, target_word)[0]
+    presidents_using_target_word = groups_of_files_using_word(groups_of_files, target_word)[0]
     if presidents_using_target_word:
         return presidents_using_target_word[0]
     else:
