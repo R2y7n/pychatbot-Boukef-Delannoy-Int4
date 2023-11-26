@@ -1,5 +1,6 @@
 import os
 import math
+"""we could rearrange the order of the functions here to make it more clean"""
 
 def list_of_files(directory, extension):
     """create a list containing the files names"""
@@ -9,8 +10,8 @@ def list_of_files(directory, extension):
             files_names.append(filename)
     return files_names
 
-def president_name(files_names):
-    """create a list containing the names of the presidents"""
+def authors_names(files_names):
+    """create a list containing the names of the authors"""
     president_names = []
     for file_name in files_names:
         name = ""
@@ -21,6 +22,15 @@ def president_name(files_names):
         if name not in president_names:
             president_names.append(name)
     return president_names
+
+def authors_names_by_dates(list_authors_names, dates_of_authors):
+    """sort the list containing the names of the authors by dates"""
+    for tested_name in range(len(list_authors_names) - 1):
+        for name in range(tested_name + 1, len(list_authors_names)):
+            if dates_of_authors[list_authors_names[name]] < dates_of_authors[list_authors_names[tested_name]]:
+                list_authors_names[name], list_authors_names[tested_name] = list_authors_names[tested_name], list_authors_names[name]
+    return list_authors_names
+
 
 def lower_case_convert(file, filename):
     """create a copy of a file with all capital letters convert to lower case"""
@@ -121,26 +131,60 @@ def tf_idf_of_directory(directory):
             tf_idf[filename][word] = tf[filename][word]*idf[word]
     return tf_idf
 
+def groups_of_files_by_name(directory, list_of_names):
+    """create a dictionary containing lists of files grouped by name of the author"""
+    groups_of_files = {}
+    for filename in os.listdir(directory):
+        for name in list_of_names:
+            if name in filename:
+                if name not in groups_of_files:
+                    groups_of_files[name] = [filename]
+                else:
+                    groups_of_files[name].append(filename)
+    return groups_of_files
+
 def tf_idf_0(tf_idf):
     """create a list containing the unimportant words"""
-    """if the type of the TF-IDF is changed to matrix we could use simply a list directly instead of having to use a dictionary"""
-    first_file_check = True
+    unimportant_words = []
     for filename in tf_idf:
         for word in tf_idf[filename]:
-            if first_file_check == True:
-                dictionary_unimportant_words = tf_idf[filename]
-            else:
-                if word in dictionary_unimportant_words and tf_idf[filename][word] != 0:
-                    del dictionary_unimportant_words[word]
-        first_file_check = False
+            if word not in unimportant_words and tf_idf[filename][word] == 0:
+                unimportant_words.append(word)
+    return unimportant_words
+
+def unimportant_words_by_groups(tf_idf, groups_of_files):
+    """create a list containing the words used in all the groups of files"""
+    """if the type of the TF-IDF was changed to matrix we could probably use simply a list directly instead of having to use a dictionary"""
     unimportant_words = []
-    for word in dictionary_unimportant_words:
-        unimportant_words.append(word)
+    first_group_check = True
+    for group_of_files in groups_of_files:
+        still_unimportant_words = []
+        for filename in groups_of_files[group_of_files]:
+            if first_group_check == True:
+                for word in tf_idf[filename]:
+                    if word not in unimportant_words:
+                        unimportant_words.append(word)
+            else:
+                for word in unimportant_words:
+                    if word in tf_idf[filename] and word not in still_unimportant_words:
+                        still_unimportant_words.append(word)
+        if first_group_check == False:
+            unimportant_words = still_unimportant_words
+        first_group_check = False
+    return unimportant_words
+
+def unimportant_words_in_files(tf_idf, groups_of_files):
+    """create a list containing the unimportant words with regard to the groups of files used"""
+    if groups_of_files == "directory":
+        unimportant_words = tf_idf_0(tf_idf)
+    else:
+        unimportant_words = unimportant_words_by_groups(tf_idf, groups_of_files)
     return unimportant_words
 
 def highest_tf_idf(tf_idf):
     """create a list containing the words with the highest TF-IDF"""
-    """if the type of the TF-IDF is changed to matrix we could use simply a list directly instead of having to use a dictionary"""
+    """if the type of the TF-IDF was changed to matrix we could probably use simply a list directly instead of having to use a dictionary"""
+    """it would be cool to adapt it to do by groups of files"""
     first_file_check = True
     dictionary_highest_tf_idf_words = {}
     for filename in tf_idf:
@@ -165,19 +209,6 @@ def highest_tf_idf(tf_idf):
     for word in dictionary_highest_tf_idf_words:
         highest_tf_idf_words.append(word)
     return highest_tf_idf_words
-
-def groups_of_files_by_name(directory, list_of_names):
-    """create a dictionary containing lists of files grouped by name of the author"""
-    groups_of_files = {}
-    for filename in os.listdir(directory):
-        for name in list_of_names:
-            if name in filename:
-                if name not in groups_of_files:
-                    groups_of_files[name] = [filename]
-                else:
-                    groups_of_files[name].append(filename)
-    print(groups_of_files)
-    return groups_of_files
 
 def most_repeated_words_in_group_of_files(groups_of_files, name_of_groupe):
     """create a list containing the most repeated words in the group of file"""
@@ -210,7 +241,6 @@ def groups_of_files_using_word(groups_of_files, names, target_word):
             file = open("cleaned\\" + filename, "r", encoding = "utf-8")
             words = words_of_file(file)
             file.close()
-            print(words)
             for word in range(len(words) - 1):
                 if words[word] == target_word:
                     occurrences_by_group_of_files[number_group_of_files] = occurrences_by_group_of_files[number_group_of_files] + 1
@@ -226,3 +256,21 @@ def groups_of_files_using_word(groups_of_files, names, target_word):
                 most_repeated_occurrences = occurrences_by_group_of_files[number_group_of_files]
                 most_repeated = [names[number_group_of_files]]
     return groups_of_files_using_target_word, most_repeated
+
+def first_to_use(groups_of_files, names, target_word):
+    """return the name of the first author using the target word if there is one and None if there is none"""
+    presidents_using_target_word = groups_of_files_using_word(groups_of_files, names, target_word)[0]
+    if presidents_using_target_word:
+        return presidents_using_target_word[0]
+    else:
+        return None
+
+def not_unimportant_words_used_by_all_groups(tf_idf, groups_of_files):
+    """create a list of all not unimportant words used by all authors"""
+    universal_unimportant_words = unimportant_words_in_files(tf_idf, "directory")
+    local_unimportant_words = unimportant_words_in_files(tf_idf, groups_of_files)
+    not_unimportant_words_used_by_all = []
+    for word in local_unimportant_words:
+        if word not in universal_unimportant_words:
+            not_unimportant_words_used_by_all.append(word)
+    return not_unimportant_words_used_by_all
