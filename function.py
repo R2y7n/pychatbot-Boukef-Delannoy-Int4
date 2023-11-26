@@ -178,6 +178,8 @@ def unimportant_words_in_files(tf_idf, groups_of_files):
         unimportant_words = tf_idf_0(tf_idf)
     else:
         unimportant_words = unimportant_words_by_groups(tf_idf, groups_of_files)
+    if unimportant_words == []:
+        return None
     return unimportant_words
 
 def highest_tf_idf(tf_idf):
@@ -207,6 +209,8 @@ def highest_tf_idf(tf_idf):
     highest_tf_idf_words = []
     for word in dictionary_highest_tf_idf_words:
         highest_tf_idf_words.append(word)
+    if highest_tf_idf_words == []:
+        return None
     return highest_tf_idf_words
 
 def most_repeated_words_in_group_of_files(groups_of_files, name_of_groupe):
@@ -228,6 +232,8 @@ def most_repeated_words_in_group_of_files(groups_of_files, name_of_groupe):
         elif occurrences[word] > most_repeated_words_occurrences:
             most_repeated_words_occurrences = occurrences[word]
             most_repeated_words = [word]
+    if most_repeated_words == []:
+        return None
     return most_repeated_words
 
 def groups_of_files_using_word(groups_of_files, target_word):
@@ -253,6 +259,8 @@ def groups_of_files_using_word(groups_of_files, target_word):
             elif occurrences_by_group_of_files[group_of_files] > most_repeated_occurrences:
                 most_repeated_occurrences = occurrences_by_group_of_files[group_of_files]
                 most_repeated = [group_of_files]
+    if groups_of_files_using_target_word == []:
+        return None, None
     return groups_of_files_using_target_word, most_repeated
 
 def first_to_use(groups_of_files, target_word):
@@ -271,4 +279,6 @@ def not_unimportant_words_used_by_all_groups(tf_idf, groups_of_files):
     for word in local_unimportant_words:
         if word not in universal_unimportant_words:
             not_unimportant_words_used_by_all.append(word)
+    if not_unimportant_words_used_by_all == []:
+        return None
     return not_unimportant_words_used_by_all
