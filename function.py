@@ -135,15 +135,13 @@ def tf_idf_of_directory(directory):
 
 def groups_of_files_by_name(file_names, list_of_names):
     """create a dictionary containing lists of files grouped by name of the author"""
-    groups_of_files = {}
+    groups_of_files = {name: [] for name in list_of_names}
     for name in list_of_names:
         for filename in file_names:
             if name in filename:
-                if name not in groups_of_files:
-                    groups_of_files[name] = [filename]
-                else:
-                    groups_of_files[name].append(filename)
+                groups_of_files[name].append(filename)
     return groups_of_files
+
 
 def tf_idf_0(tf_idf):
     """create a list containing the unimportant words"""
