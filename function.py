@@ -1,9 +1,9 @@
 import os
 import math
-"""we could rearrange the order of the functions here to make it more clean"""
+#we could rearrange the order of the functions here to make it more clean
 
 def list_of_files(directory, extension):
-    """create a list containing the files names"""
+    #create a list containing the files names
     files_names = []
     for filename in os.listdir(directory):
         if filename.endswith(extension):
@@ -11,7 +11,7 @@ def list_of_files(directory, extension):
     return files_names
 
 def authors_names(files_names):
-    """create a list containing the names of the authors"""
+    #create a list containing the names of the authors
     list_authors_names = []
     for file_name in files_names:
         name = ""
@@ -24,7 +24,7 @@ def authors_names(files_names):
     return list_authors_names
 
 def authors_names_by_dates(files_names, dates_of_authors):
-    """sort the list containing the names of the authors by dates"""
+    #sort the list containing the names of the authors by dates
     list_authors_names = authors_names(files_names)
     for tested_name in range(len(list_authors_names) - 1):
         for name in range(tested_name + 1, len(list_authors_names)):
@@ -34,7 +34,7 @@ def authors_names_by_dates(files_names, dates_of_authors):
 
 
 def lower_case_convert(file, filename):
-    """create a copy of a file with all capital letters convert to lower case"""
+    #create a copy of a file with all capital letters convert to lower case
     texte = file.readlines()
     lower_cased_file = open("cleaned\\" + "lower_casely_cleaned_" + filename, "w", encoding = "utf-8")
     for lines in texte:
@@ -46,8 +46,8 @@ def lower_case_convert(file, filename):
     lower_cased_file.close()
 
 def remove_punctuation(file, filename):
-    """create a copy of a file without any form of punctuation, number or symbol"""
-    """possibility of improvement by removing after_space variable"""
+    #create a copy of a file without any form of punctuation, number or symbol
+    #possibility of improvement by removing after_space variable
     texte = file.readlines()
     after_space = True
     punctuation_removed_file = open("cleaned\\" + "cleaned_" + filename, "w", encoding = "utf-8")
@@ -67,7 +67,7 @@ def remove_punctuation(file, filename):
     punctuation_removed_file.close()
 
 def create_cleaned_files(directory):
-    """create a cleaned repository with cleaned copies of the files of the original repository within it"""
+    #create a cleaned repository with cleaned copies of the files of the original repository within it
     if not os.path.exists("cleaned"):
         os.mkdir("cleaned")
     for filename in os.listdir(directory):
@@ -89,15 +89,15 @@ def create_cleaned_files(directory):
     return "./cleaned"
 
 def words_of_file(file):
-    """create a list containing the words of a file"""
+    #create a list containing the words of a file
     text = file.readlines()
     for line in text:
         words = line.split()
     return words
 
 def tf_of_directory(directory):
-    """create a dictionary containing the different TF (Term Frequency) of the different files of the directory"""
-    """if after_space is remove from remove_punctuation don't forget to adapt here too"""
+    #create a dictionary containing the different TF (Term Frequency) of the different files of the directory
+    #if after_space is remove from remove_punctuation don't forget to adapt here too
     tf = {}
     for filename in os.listdir(directory):
         tf[filename] = {}
@@ -111,7 +111,7 @@ def tf_of_directory(directory):
     return tf
 
 def idf_of_directory(tf):
-    """create a dictionary containing the IDF (Inverse Document Frequency) of the directory"""
+    #create a dictionary containing the IDF (Inverse Document Frequency) of the directory
     idf = {}
     for filename in tf:
         for word in tf[filename]:
@@ -121,9 +121,9 @@ def idf_of_directory(tf):
     return idf
 
 def tf_idf_of_directory(directory):
-    """create a dictionary containing the TF-IDF (Term Frequency-Inverse Document Frequency) of the directory"""
-    """it would probably be better for the following functions to have the TF-IDF as a matrix instead of a dictionary"""
-    """it would be great to have it sorted by dates of documents"""
+    #create a dictionary containing the TF-IDF (Term Frequency-Inverse Document Frequency) of the directory
+    #it would probably be better for the following functions to have the TF-IDF as a matrix instead of a dictionary
+    #it would be great to have it sorted by dates of documents
     tf_idf = {}
     tf = tf_of_directory(directory)
     idf = idf_of_directory(tf)
@@ -134,7 +134,7 @@ def tf_idf_of_directory(directory):
     return tf_idf
 
 def groups_of_files_by_name(file_names, list_of_names):
-    """create a dictionary containing lists of files grouped by name of the author"""
+    #create a dictionary containing lists of files grouped by name of the author
     groups_of_files = {name: [] for name in list_of_names}
     for name in list_of_names:
         for filename in file_names:
@@ -142,9 +142,8 @@ def groups_of_files_by_name(file_names, list_of_names):
                 groups_of_files[name].append(filename)
     return groups_of_files
 
-
 def tf_idf_0(tf_idf):
-    """create a list containing the unimportant words"""
+    #create a list containing the unimportant words
     unimportant_words = []
     for filename in tf_idf:
         for word in tf_idf[filename]:
@@ -153,8 +152,8 @@ def tf_idf_0(tf_idf):
     return unimportant_words
 
 def unimportant_words_by_groups(tf_idf, groups_of_files):
-    """create a list containing the words used in all the groups of files"""
-    """if the type of the TF-IDF was changed to matrix we could probably use simply a list directly instead of having to use a dictionary"""
+    #create a list containing the words used in all the groups of files
+    #if the type of the TF-IDF was changed to matrix we could probably use simply a list directly instead of having to use a dictionary
     unimportant_words = []
     first_group_check = True
     for group_of_files in groups_of_files:
@@ -174,7 +173,7 @@ def unimportant_words_by_groups(tf_idf, groups_of_files):
     return unimportant_words
 
 def unimportant_words_in_files(tf_idf, groups_of_files):
-    """create a list containing the unimportant words with regard to the groups of files used"""
+    #create a list containing the unimportant words with regard to the groups of files used
     if groups_of_files == "directory":
         unimportant_words = tf_idf_0(tf_idf)
     else:
@@ -182,9 +181,9 @@ def unimportant_words_in_files(tf_idf, groups_of_files):
     return unimportant_words
 
 def highest_tf_idf(tf_idf):
-    """create a list containing the words with the highest TF-IDF"""
-    """if the type of the TF-IDF was changed to matrix we could probably use simply a list directly instead of having to use a dictionary"""
-    """it would be cool to adapt it to do by groups of files"""
+    #create a list containing the words with the highest TF-IDF
+    #if the type of the TF-IDF was changed to matrix we could probably use simply a list directly instead of having to use a dictionary
+    #it would be cool to adapt it to do by groups of files
     first_file_check = True
     dictionary_highest_tf_idf_words = {}
     for filename in tf_idf:
@@ -211,8 +210,8 @@ def highest_tf_idf(tf_idf):
     return highest_tf_idf_words
 
 def most_repeated_words_in_group_of_files(groups_of_files, name_of_groupe):
-    """create a list containing the most repeated words in the group of file"""
-    """if after_space is remove from remove_punctuation don't forget to adapt here too"""
+    #create a list containing the most repeated words in the group of files
+    #if after_space is remove from remove_punctuation don't forget to adapt here too
     group_of_files = groups_of_files[name_of_groupe]
     occurrences = {}
     for filename in group_of_files:
@@ -232,8 +231,8 @@ def most_repeated_words_in_group_of_files(groups_of_files, name_of_groupe):
     return most_repeated_words
 
 def groups_of_files_using_word(groups_of_files, target_word):
-    """create two lists, the first one containing all the groups of files using the target word and the second one the groups of files using it the most"""
-    """if after_space is remove from remove_punctuation don't forget to adapt here too"""
+    #create two lists, the first one containing all the groups of files using the target word and the second one the groups of files using it the most
+    #if after_space is remove from remove_punctuation don't forget to adapt here too
     occurrences_by_group_of_files = {}
     for group_of_files in groups_of_files:
         for filename in groups_of_files[group_of_files]:
@@ -257,7 +256,7 @@ def groups_of_files_using_word(groups_of_files, target_word):
     return groups_of_files_using_target_word, most_repeated
 
 def first_to_use(groups_of_files, target_word):
-    """return the name of the first author using the target word if there is one and None if there is none"""
+    #return the name of the first author using the target word if there is one and None if there is none
     presidents_using_target_word = groups_of_files_using_word(groups_of_files, target_word)[0]
     if presidents_using_target_word:
         return presidents_using_target_word[0]
@@ -265,7 +264,7 @@ def first_to_use(groups_of_files, target_word):
         return None
 
 def not_unimportant_words_used_by_all_groups(tf_idf, groups_of_files):
-    """create a list of all not unimportant words used by all authors"""
+    #create a list of all not unimportant words used by all authors
     universal_unimportant_words = unimportant_words_in_files(tf_idf, "directory")
     local_unimportant_words = unimportant_words_in_files(tf_idf, groups_of_files)
     not_unimportant_words_used_by_all = []

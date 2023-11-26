@@ -1,13 +1,13 @@
 from function import *
 
 if __name__ == '__main__':
-    """we could rearrange the order of the calls of the functions here to make it more clean"""
+    #we could rearrange the order of the calls of the functions here to make it more clean
     directory = "./speeches"
     files_names = list_of_files(directory, "txt")
     dates_presidents = {"Giscard dEstaing": (1974, 1981), "Mitterrand": (1981, 1995), "Chirac": (1995, 2007), "Sarkozy": (2007, 2012), "Hollande": (2012, 2017), "Macron": (2017, 2022)}
     presidents_names = authors_names_by_dates(files_names, dates_presidents)
     print(presidents_names)
-    """if the code has already been executed no need to execute it again"""
+    #if the code has already been executed no need to execute it again
     if not os.path.exists("cleaned"):
         clean_directory = create_cleaned_files(directory)
     else:
@@ -15,6 +15,7 @@ if __name__ == '__main__':
     files_names = list_of_files(clean_directory, "txt")
     tf_idf = tf_idf_of_directory(clean_directory)
     groups_of_files = groups_of_files_by_name(files_names, presidents_names)
+    print(groups_of_files)
     print("If you want to see the unimportant words in the document corpus, enter 1")
     print("If you want to see the words with the highest TF-IDF score, enter 2")
     print("If you want to see the most repeated words by president Chirac, enter 3")
