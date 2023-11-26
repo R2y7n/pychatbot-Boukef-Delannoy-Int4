@@ -15,6 +15,7 @@ The primary goal of our project is to develop a chatbot that leverages the TF-ID
 #TF-IDF: 
 
 TF-IDF (Term Frequency-Inverse Document Frequency) is a numerical statistic widely used in natural language processing and information retrieval to evaluate the importance of a word in a document relative to a collection of documents (corpus).
+
 ##Main functionalities
 
 - **Speeches**: Contains the dataset of presidential speeches.
