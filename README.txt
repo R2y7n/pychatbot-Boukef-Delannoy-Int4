@@ -14,7 +14,7 @@ With Arthur Delannoy, and me (Rayane Boukef) we are going to tell you more about
 The primary goal of our project is to develop a chatbot that leverages the TF-IDF method for text analysis. By understanding word frequencies in texts, the chatbot aims to provide meaningful responses to user queries.
 #TF-IDF: 
 
-TF-IDF (Term Frequency-Inverse Document Frequency) is a numerical statistic widely used in natural language processing and information retrieval to evaluate the importance of a word in a document relative to a collection of documents (corpus).
+TF-IDF (Term Frequency-Inverse Document Frequency) is a method widely used in natural language processing and information retrieval to evaluate the importance of a word in a document relative to a collection of documents (corpus).
 
 ##Main functionalities
 
