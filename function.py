@@ -15,7 +15,7 @@ def authors_names(files_names):
     list_authors_names = []
     for file_name in files_names:
         name = ""
-        character = 11
+        character = 19
         while ord(file_name[character]) == 32 or 65 <= ord(file_name[character]) <= 90 or 97 <= ord(file_name[character]) <= 122:
             name = name + file_name[character]
             character = character + 1
@@ -23,15 +23,19 @@ def authors_names(files_names):
             list_authors_names.append(name)
     return list_authors_names
 
-def authors_names_by_dates(files_names, dates_of_authors):
+def files_and_authors_names_by_dates(files_names, dates_of_authors):
     #sort the list containing the names of the authors by dates
     list_authors_names = authors_names(files_names)
     for tested_name in range(len(list_authors_names) - 1):
         for name in range(tested_name + 1, len(list_authors_names)):
             if dates_of_authors[list_authors_names[name]] < dates_of_authors[list_authors_names[tested_name]]:
                 list_authors_names[name], list_authors_names[tested_name] = list_authors_names[tested_name], list_authors_names[name]
-    return list_authors_names
-
+    sorted_files_names = []
+    for name in list_authors_names:
+        for filenames in files_names:
+            if name in filenames:
+                sorted_files_names.append(filenames)
+    return sorted_files_names, list_authors_names
 
 def lower_case_convert(file, filename):
     #create a copy of a file with all capital letters convert to lower case
@@ -95,11 +99,11 @@ def words_of_file(file):
         words = line.split()
     return words
 
-def tf_of_directory(directory):
-    #create a dictionary containing the different TF (Term Frequency) of the different files of the directory
+def tf_of_files(files_names):
+    #create a dictionary containing the different TF (Term Frequency) of the files
     #if after_space is remove from remove_punctuation don't forget to adapt here too
     tf = {}
-    for filename in os.listdir(directory):
+    for filename in files_names:
         tf[filename] = {}
         file = open("cleaned\\" + filename, "r", encoding = "utf-8")
         words = words_of_file(file)
@@ -110,8 +114,8 @@ def tf_of_directory(directory):
             tf[filename][word] = tf[filename][word]/(len(words) - 1)
     return tf
 
-def idf_of_directory(tf):
-    #create a dictionary containing the IDF (Inverse Document Frequency) of the directory
+def idf_of_files(tf):
+    #create a dictionary containing the IDF (Inverse Document Frequency) of the files
     idf = {}
     for filename in tf:
         for word in tf[filename]:
@@ -120,13 +124,12 @@ def idf_of_directory(tf):
         idf[word] = math.log(len(tf)/idf[word])
     return idf
 
-def tf_idf_of_directory(directory):
-    #create a dictionary containing the TF-IDF (Term Frequency-Inverse Document Frequency) of the directory
+def tf_idf_of_files(files_names):
+    #create a dictionary containing the TF-IDF (Term Frequency-Inverse Document Frequency) of the files
     #it would probably be better for the following functions to have the TF-IDF as a matrix instead of a dictionary
-    #it would be great to have it sorted by dates of documents
     tf_idf = {}
-    tf = tf_of_directory(directory)
-    idf = idf_of_directory(tf)
+    tf = tf_of_files(files_names)
+    idf = idf_of_files(tf)
     for filename in tf:
         tf_idf[filename] = {}
         for word in tf[filename]:
@@ -135,6 +138,7 @@ def tf_idf_of_directory(directory):
 
 def groups_of_files_by_name(file_names, list_of_names):
     #create a dictionary containing lists of files grouped by name of the author
+    #could maybe be simplified considering the fact file_name is already sorted in the same order as list_of_names
     groups_of_files = {name: [] for name in list_of_names}
     for name in list_of_names:
         for filename in file_names:
