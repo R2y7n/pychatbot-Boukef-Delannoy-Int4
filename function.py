@@ -121,7 +121,7 @@ def idf_of_files(tf):
         for word in tf[filename]:
             idf[word] = idf.get(word, 0) + 1
     for word in idf.keys():
-        idf[word] = math.log(len(tf)/idf[word])
+        idf[word] = math.log10(len(tf)/idf[word])
     return idf
 
 def tf_idf_of_files(files_names):
