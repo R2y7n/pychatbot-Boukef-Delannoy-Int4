@@ -217,7 +217,7 @@ def highest_tf_idf(tf_idf):
         return None
     return highest_tf_idf_words
 
-def most_repeated_words_in_group_of_files(groups_of_files, name_of_groupe):
+def most_repeated_not_unimportant_words_in_group_of_files(tf_idf, groups_of_files, name_of_groupe):
     #create a list containing the most repeated words in the group of files
     #if after_space is remove from remove_punctuation don't forget to adapt here too
     group_of_files = groups_of_files[name_of_groupe]
@@ -230,12 +230,15 @@ def most_repeated_words_in_group_of_files(groups_of_files, name_of_groupe):
             occurrences[words[word]] = occurrences.get(words[word], 0) + 1
     most_repeated_words = []
     most_repeated_words_occurrences = 0
+    unimportant_words = unimportant_words_in_files(tf_idf, "directory")
     for word in occurrences:
-        if occurrences[word] == most_repeated_words_occurrences:
+        if occurrences[word] == most_repeated_words_occurrences and word not in unimportant_words:
             most_repeated_words.append(word)
-        elif occurrences[word] > most_repeated_words_occurrences:
+        elif occurrences[word] > most_repeated_words_occurrences and word not in unimportant_words:
             most_repeated_words_occurrences = occurrences[word]
             most_repeated_words = [word]
+    print(unimportant_words)
+    print(most_repeated_words)
     if most_repeated_words == []:
         return None
     return most_repeated_words

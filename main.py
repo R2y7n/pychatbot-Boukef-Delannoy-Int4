@@ -39,9 +39,9 @@ if __name__ == '__main__':
     elif user_choice == 3:
         print(presidents_names)
         president = input("Enter the name of the president: ")
-        most_repeated_words_president = most_repeated_words_in_group_of_files(groups_of_files, president)
+        most_repeated_words_president = most_repeated_not_unimportant_words_in_group_of_files(tf_idf, groups_of_files, president)
         if most_repeated_words_president == None:
-            print(f"President {president} did not say anything.")
+            print(f"President {president} did not say anything interesting.")
         else:
             print(f"The most repeated words by president {president} are: ")
             print(most_repeated_words_president)
