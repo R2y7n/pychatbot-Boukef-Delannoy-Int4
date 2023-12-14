@@ -68,7 +68,7 @@ def create_cleaned_files(directory):
             os.remove("cleaned\\" + "lower_casely_cleaned_" + filename)
     return "./cleaned"
 
-"""2. Pretreatment and Cleaning of Texte"""
+"""2. Pretreatment and Cleaning of Text"""
 
 def lower_case_convert(file, filename):
     #create a copy of a file with all capital letters convert to lower case
@@ -143,7 +143,7 @@ def most_repeated_not_unimportant_words_in_group_of_files(tf_idf, groups_of_file
         file = open("cleaned\\" + filename, "r", encoding = "utf-8")
         words = words_of_file(file)
         file.close()
-        for word in range(len(words) - 1):
+        for word in range(len(words)):
             occurrences[words[word]] = occurrences.get(words[word], 0) + 1
     most_repeated_words = []
     most_repeated_words_occurrences = 0
@@ -171,10 +171,10 @@ def tf_of_files(files_names):
         file = open("cleaned\\" + filename, "r", encoding = "utf-8")
         words = words_of_file(file)
         file.close()
-        for word in range(len(words) - 1):
+        for word in range(len(words)):
             tf[filename][words[word]] = tf[filename].get(words[word], 0) + 1
         for word in tf[filename]:
-            tf[filename][word] = tf[filename][word]/(len(words) - 1)
+            tf[filename][word] = tf[filename][word]/(len(words))
     return tf
 
 def idf_of_files(tf):
@@ -258,7 +258,7 @@ def groups_of_files_using_word(groups_of_files, target_word):
             file = open("cleaned\\" + filename, "r", encoding = "utf-8")
             words = words_of_file(file)
             file.close()
-            for word in range(len(words) - 1):
+            for word in range(len(words)):
                 if words[word] == target_word:
                     occurrences_by_group_of_files[group_of_files] = occurrences_by_group_of_files.get(group_of_files, 0) + 1
     groups_of_files_using_target_word = []
@@ -278,9 +278,9 @@ def groups_of_files_using_word(groups_of_files, target_word):
 
 def first_to_use(groups_of_files, target_word):
     #return the name of the first author using the target word if there is one and None if there is none
-    presidents_using_target_word = groups_of_files_using_word(groups_of_files, target_word)[0]
-    if presidents_using_target_word:
-        return presidents_using_target_word[0]
+    file_using_target_word = groups_of_files_using_word(groups_of_files, target_word)[0]
+    if file_using_target_word:
+        return file_using_target_word[0]
     else:
         return None
 
