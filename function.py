@@ -2,7 +2,7 @@ import os
 import math
 #we could rearrange the order of the functions here to make it more clean
 
-"""1. Manipulation et Organisation de Fichiers """
+"""1. Manipulation and Organisation of Files"""
 
 def list_of_files(directory, extension):
     #create a list containing the files names
@@ -38,6 +38,7 @@ def files_and_authors_names_by_dates(files_names, dates_of_authors):
             if name in filenames:
                 sorted_files_names.append(filenames)
     return sorted_files_names, list_authors_names
+
 def words_of_file(file):
     #create a list containing the words of a file
     text = file.readlines()
@@ -67,7 +68,7 @@ def create_cleaned_files(directory):
             os.remove("cleaned\\" + "lower_casely_cleaned_" + filename)
     return "./cleaned"
 
-"""Prétraitement et Nettoyage de Texte"""
+"""2. Pretreatment and Cleaning of Texte"""
 
 def lower_case_convert(file, filename):
     #create a copy of a file with all capital letters convert to lower case
@@ -111,7 +112,6 @@ def unimportant_words_in_files(tf_idf, groups_of_files):
     if unimportant_words == []:
         return None
     return unimportant_words
-
 
 def unimportant_words_by_groups(tf_idf, groups_of_files):
     #create a list containing the words used in all the groups of files
@@ -160,8 +160,7 @@ def most_repeated_not_unimportant_words_in_group_of_files(tf_idf, groups_of_file
         return None
     return most_repeated_words
 
-
-"""Analyse et Traitement des Données Textuelles"""
+"""3. Analysis and Treatment of Textual Datas"""
 
 def tf_of_files(files_names):
     #create a dictionary containing the different TF (Term Frequency) of the files
@@ -250,7 +249,6 @@ def highest_tf_idf(tf_idf):
         return None
     return highest_tf_idf_words
 
-
 def groups_of_files_using_word(groups_of_files, target_word):
     #create two lists, the first one containing all the groups of files using the target word and the second one the groups of files using it the most
     #if after_space is remove from remove_punctuation don't forget to adapt here too
@@ -297,5 +295,3 @@ def not_unimportant_words_used_by_all_groups(tf_idf, groups_of_files):
     if not_unimportant_words_used_by_all == []:
         return None
     return not_unimportant_words_used_by_all
-
-
