@@ -1,6 +1,7 @@
 from function import *
 
 if __name__ == '__main__':
+    #president part
     #we could rearrange the order of the calls of the functions here to make it more clean
     directory = "./speeches"
     #if the code has already been executed no need to execute it again
@@ -13,11 +14,12 @@ if __name__ == '__main__':
     files_names, presidents_names = files_and_authors_names_by_dates(files_names, dates_presidents)
     tf_idf = tf_idf_of_files(files_names)
     groups_of_files = groups_of_files_by_name(files_names, presidents_names)
+    print("To quit, enter 0")
     print("To see the unimportant words in the document corpus, enter 1")
     print("To see the words with the highest TF-IDF score, enter 2")
     print("To see the most repeated words by a certain president, enter 3")
-    print("To see the presidents who said the a certain word and the ones who said it the most, enter 4")
-    print('To see the first president who said a certain word or another certain word, enter 5')
+    print("To see the presidents who said a certain word and the ones who said it the most, enter 4")
+    print("To see the first president who said a certain word or another certain word, enter 5")
     print("To see the words that all the presidents have pronounced but that did not appears in all of their speeches, enter 6")
     print()
     user_choice = int(input())
@@ -55,6 +57,7 @@ if __name__ == '__main__':
             print(presidents_using_target_word)
             print("And the ones who said it the most are: ")
             print(presidents_using_the_most_target_word)
+            print(tf_idf)
     elif user_choice == 5:
         word1 = input("Enter the first word: ")
         first_to_use_word1 = first_to_use(groups_of_files, word1)
@@ -89,3 +92,26 @@ if __name__ == '__main__':
         else:
             print("The words that all presidents have pronounced but that did not appears in all of their speeches are: ")
             print(words_used_by_all_but_not_all_speeches)
+
+    #question part
+    questions_directory = "./questions"
+    for filename in os.listdir(questions_directory):
+        if os.path.isfile(os.path.join(questions_directory, filename)):
+            os.remove(os.path.join(questions_directory, filename))
+    user_choice = None
+    question_number = 1
+    question = None
+    while user_choice != 0 and question != "quit":
+        question = input("Ask a question (if you want to quit enter quit): ")
+        if question != "quit":
+            create_question_file(questions_directory, question, str(question_number))
+            cleaned_questions_directory = create_cleaned_questions(questions_directory)
+            tf_idf_questions = tf_idf_of_questions(question_number)
+            print("To quit, enter 0")
+            print("To have tf-idf of questions, enter 1")
+            print()
+            user_choice = int(input())
+            print()
+            if user_choice == 1:
+                print(tf_idf_questions)
+            question_number = question_number + 1

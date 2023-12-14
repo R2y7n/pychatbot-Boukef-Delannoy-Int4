@@ -295,3 +295,102 @@ def not_unimportant_words_used_by_all_groups(tf_idf, groups_of_files):
     if not_unimportant_words_used_by_all == []:
         return None
     return not_unimportant_words_used_by_all
+
+
+
+#question part
+
+def create_question_file(directory, question, question_number):
+    #create a file for the question in the dictionary
+    question_file = open(directory + "\\question" + question_number + ".txt", "a", encoding = "utf-8")
+    question_file.write(question + "\n")
+    question_file.close()
+
+
+"""BAD (no seriously I have to change that)"""
+
+
+def lower_case_convert_questions(file, filename):
+    #create a copy of a file with all capital letters convert to lower case
+    texte = file.readlines()
+    lower_cased_file = open("cleaned_questions\\" + "lower_casely_cleaned_" + filename, "w", encoding = "utf-8")
+    for lines in texte:
+        for character in lines:
+            if 65 <= ord(character) <= 90:
+                lower_cased_file.write(chr(ord(character) + 32))
+            else:
+                lower_cased_file.write(character)
+    lower_cased_file.close()
+
+def remove_punctuation_questions(file, filename):
+    #create a copy of a file without any form of punctuation, number or symbol
+    #possibility of improvement by removing after_space variable
+    texte = file.readlines()
+    after_space = True
+    punctuation_removed_file = open("cleaned_questions\\" + "cleaned_" + filename, "w", encoding = "utf-8")
+    for lines in texte:
+        for character in lines:
+            if ord(character) <= 31 or 33 <= ord(character) <= 64 or 91 <= ord(character) <= 96 or 123 <= ord(character) <= 127:
+                if after_space == False:
+                    punctuation_removed_file.write(" ")
+                    after_space = True
+            elif ord(character) <= 32:
+                if after_space == False:
+                    punctuation_removed_file.write(character)
+                    after_space = True
+            else:
+                punctuation_removed_file.write(character)
+                after_space = False
+    punctuation_removed_file.close()
+
+def create_cleaned_questions(questions_directory):
+    #create a cleaned repository with cleaned copies of the files of the original repository within it
+    if not os.path.exists("cleaned_questions"):
+        os.mkdir("cleaned_questions")
+    for filename in os.listdir("cleaned_questions"):
+        if os.path.isfile(os.path.join("cleaned_questions", filename)):
+            os.remove(os.path.join("cleaned_questions", filename))
+    for filename in os.listdir(questions_directory):
+        file = open("questions\\" + filename, "r", encoding = "utf-8")
+        cleaned_file = open("cleaned_questions\\" + filename, "w", encoding = "utf-8")
+        cleaned_file.write(file.read())
+        file.close()
+        cleaned_file.close()
+    for filename in os.listdir("cleaned_questions"):
+        if not os.path.exists("cleaned_questions\\" + "cleaned_" + filename):
+            file = open("cleaned_questions\\" + filename, "r", encoding = "utf-8")
+            lower_case_convert_questions(file, filename)
+            file.close()
+            os.remove("cleaned_questions\\" + filename)
+            file = open("cleaned_questions\\" + "lower_casely_cleaned_" + filename, "r", encoding = "utf-8")
+            remove_punctuation_questions(file, filename)
+            file.close()
+            os.remove("cleaned_questions\\" + "lower_casely_cleaned_" + filename)
+    return "./cleaned_questions"
+
+def tf_of_questions(questions_number):
+    #create a dictionary containing the different TF (Term Frequency) of the files
+    #if after_space is remove from remove_punctuation don't forget to adapt here too
+    tf = {}
+    for question_number in range(questions_number):
+        tf["question" + str(question_number + 1)] = {}
+        file = open("cleaned_questions\\" + "cleaned_question" + str(question_number + 1) + ".txt", "r", encoding = "utf-8")
+        words = words_of_file(file)
+        file.close()
+        for word in range(len(words) - 1):
+            tf["question" + str(question_number + 1)][words[word]] = tf["question" + str(question_number + 1)].get(words[word], 0) + 1
+        for word in tf["question" + str(question_number + 1)]:
+            tf["question" + str(question_number + 1)][word] = tf["question" + str(question_number + 1)][word]/(len(words) - 1)
+    return tf
+
+def tf_idf_of_questions(questions_number):
+    #create a dictionary containing the TF-IDF (Term Frequency-Inverse Document Frequency) of the files
+    #it would probably be better for the following functions to have the TF-IDF as a matrix instead of a dictionary
+    tf_idf = {}
+    tf = tf_of_questions(questions_number)
+    idf = idf_of_files(tf)
+    for filename in tf:
+        tf_idf[filename] = {}
+        for word in tf[filename]:
+            tf_idf[filename][word] = tf[filename][word]*idf[word]
+    return tf_idf
