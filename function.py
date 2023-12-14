@@ -2,6 +2,8 @@ import os
 import math
 #we could rearrange the order of the functions here to make it more clean
 
+"""1. Manipulation et Organisation de Fichiers """
+
 def list_of_files(directory, extension):
     #create a list containing the files names
     files_names = []
@@ -36,6 +38,36 @@ def files_and_authors_names_by_dates(files_names, dates_of_authors):
             if name in filenames:
                 sorted_files_names.append(filenames)
     return sorted_files_names, list_authors_names
+def words_of_file(file):
+    #create a list containing the words of a file
+    text = file.readlines()
+    for line in text:
+        words = line.split()
+    return words
+
+def create_cleaned_files(directory):
+    #create a cleaned repository with cleaned copies of the files of the original repository within it
+    if not os.path.exists("cleaned"):
+        os.mkdir("cleaned")
+    for filename in os.listdir(directory):
+        file = open("speeches\\" + filename, "r", encoding = "utf-8")
+        cleaned_file = open("cleaned\\" + filename, "w", encoding = "utf-8")
+        cleaned_file.write(file.read())
+        file.close()
+        cleaned_file.close()
+    for filename in os.listdir("./cleaned"):
+        if not os.path.exists("cleaned\\" + "cleaned_" + filename):
+            file = open("cleaned\\" + filename, "r", encoding = "utf-8")
+            lower_case_convert(file, filename)
+            file.close()
+            os.remove("cleaned\\" + filename)
+            file = open("cleaned\\" + "lower_casely_cleaned_" + filename, "r", encoding = "utf-8")
+            remove_punctuation(file, filename)
+            file.close()
+            os.remove("cleaned\\" + "lower_casely_cleaned_" + filename)
+    return "./cleaned"
+
+"""Prétraitement et Nettoyage de Texte"""
 
 def lower_case_convert(file, filename):
     #create a copy of a file with all capital letters convert to lower case
@@ -70,34 +102,66 @@ def remove_punctuation(file, filename):
                 after_space = False
     punctuation_removed_file.close()
 
-def create_cleaned_files(directory):
-    #create a cleaned repository with cleaned copies of the files of the original repository within it
-    if not os.path.exists("cleaned"):
-        os.mkdir("cleaned")
-    for filename in os.listdir(directory):
-        file = open("speeches\\" + filename, "r", encoding = "utf-8")
-        cleaned_file = open("cleaned\\" + filename, "w", encoding = "utf-8")
-        cleaned_file.write(file.read())
-        file.close()
-        cleaned_file.close()
-    for filename in os.listdir("./cleaned"):
-        if not os.path.exists("cleaned\\" + "cleaned_" + filename):
-            file = open("cleaned\\" + filename, "r", encoding = "utf-8")
-            lower_case_convert(file, filename)
-            file.close()
-            os.remove("cleaned\\" + filename)
-            file = open("cleaned\\" + "lower_casely_cleaned_" + filename, "r", encoding = "utf-8")
-            remove_punctuation(file, filename)
-            file.close()
-            os.remove("cleaned\\" + "lower_casely_cleaned_" + filename)
-    return "./cleaned"
+def unimportant_words_in_files(tf_idf, groups_of_files):
+    #create a list containing the unimportant words with regard to the groups of files used
+    if groups_of_files == "directory":
+        unimportant_words = tf_idf_0(tf_idf)
+    else:
+        unimportant_words = unimportant_words_by_groups(tf_idf, groups_of_files)
+    if unimportant_words == []:
+        return None
+    return unimportant_words
 
-def words_of_file(file):
-    #create a list containing the words of a file
-    text = file.readlines()
-    for line in text:
-        words = line.split()
-    return words
+
+def unimportant_words_by_groups(tf_idf, groups_of_files):
+    #create a list containing the words used in all the groups of files
+    #if the type of the TF-IDF was changed to matrix we could probably use simply a list directly instead of having to use a dictionary
+    unimportant_words = []
+    first_group_check = True
+    for group_of_files in groups_of_files:
+        still_unimportant_words = []
+        for filename in groups_of_files[group_of_files]:
+            if first_group_check == True:
+                for word in tf_idf[filename]:
+                    if word not in unimportant_words:
+                        unimportant_words.append(word)
+            else:
+                for word in unimportant_words:
+                    if word in tf_idf[filename] and word not in still_unimportant_words:
+                        still_unimportant_words.append(word)
+        if first_group_check == False:
+            unimportant_words = still_unimportant_words
+        first_group_check = False
+    return unimportant_words
+
+def most_repeated_not_unimportant_words_in_group_of_files(tf_idf, groups_of_files, name_of_groupe):
+    #create a list containing the most repeated words in the group of files
+    #if after_space is remove from remove_punctuation don't forget to adapt here too
+    group_of_files = groups_of_files[name_of_groupe]
+    occurrences = {}
+    for filename in group_of_files:
+        file = open("cleaned\\" + filename, "r", encoding = "utf-8")
+        words = words_of_file(file)
+        file.close()
+        for word in range(len(words) - 1):
+            occurrences[words[word]] = occurrences.get(words[word], 0) + 1
+    most_repeated_words = []
+    most_repeated_words_occurrences = 0
+    unimportant_words = unimportant_words_in_files(tf_idf, "directory")
+    for word in occurrences:
+        if occurrences[word] == most_repeated_words_occurrences and word not in unimportant_words:
+            most_repeated_words.append(word)
+        elif occurrences[word] > most_repeated_words_occurrences and word not in unimportant_words:
+            most_repeated_words_occurrences = occurrences[word]
+            most_repeated_words = [word]
+    print(unimportant_words)
+    print(most_repeated_words)
+    if most_repeated_words == []:
+        return None
+    return most_repeated_words
+
+
+"""Analyse et Traitement des Données Textuelles"""
 
 def tf_of_files(files_names):
     #create a dictionary containing the different TF (Term Frequency) of the files
@@ -155,37 +219,6 @@ def tf_idf_0(tf_idf):
                 unimportant_words.append(word)
     return unimportant_words
 
-def unimportant_words_by_groups(tf_idf, groups_of_files):
-    #create a list containing the words used in all the groups of files
-    #if the type of the TF-IDF was changed to matrix we could probably use simply a list directly instead of having to use a dictionary
-    unimportant_words = []
-    first_group_check = True
-    for group_of_files in groups_of_files:
-        still_unimportant_words = []
-        for filename in groups_of_files[group_of_files]:
-            if first_group_check == True:
-                for word in tf_idf[filename]:
-                    if word not in unimportant_words:
-                        unimportant_words.append(word)
-            else:
-                for word in unimportant_words:
-                    if word in tf_idf[filename] and word not in still_unimportant_words:
-                        still_unimportant_words.append(word)
-        if first_group_check == False:
-            unimportant_words = still_unimportant_words
-        first_group_check = False
-    return unimportant_words
-
-def unimportant_words_in_files(tf_idf, groups_of_files):
-    #create a list containing the unimportant words with regard to the groups of files used
-    if groups_of_files == "directory":
-        unimportant_words = tf_idf_0(tf_idf)
-    else:
-        unimportant_words = unimportant_words_by_groups(tf_idf, groups_of_files)
-    if unimportant_words == []:
-        return None
-    return unimportant_words
-
 def highest_tf_idf(tf_idf):
     #create a list containing the words with the highest TF-IDF
     #if the type of the TF-IDF was changed to matrix we could probably use simply a list directly instead of having to use a dictionary
@@ -217,31 +250,6 @@ def highest_tf_idf(tf_idf):
         return None
     return highest_tf_idf_words
 
-def most_repeated_not_unimportant_words_in_group_of_files(tf_idf, groups_of_files, name_of_groupe):
-    #create a list containing the most repeated words in the group of files
-    #if after_space is remove from remove_punctuation don't forget to adapt here too
-    group_of_files = groups_of_files[name_of_groupe]
-    occurrences = {}
-    for filename in group_of_files:
-        file = open("cleaned\\" + filename, "r", encoding = "utf-8")
-        words = words_of_file(file)
-        file.close()
-        for word in range(len(words) - 1):
-            occurrences[words[word]] = occurrences.get(words[word], 0) + 1
-    most_repeated_words = []
-    most_repeated_words_occurrences = 0
-    unimportant_words = unimportant_words_in_files(tf_idf, "directory")
-    for word in occurrences:
-        if occurrences[word] == most_repeated_words_occurrences and word not in unimportant_words:
-            most_repeated_words.append(word)
-        elif occurrences[word] > most_repeated_words_occurrences and word not in unimportant_words:
-            most_repeated_words_occurrences = occurrences[word]
-            most_repeated_words = [word]
-    print(unimportant_words)
-    print(most_repeated_words)
-    if most_repeated_words == []:
-        return None
-    return most_repeated_words
 
 def groups_of_files_using_word(groups_of_files, target_word):
     #create two lists, the first one containing all the groups of files using the target word and the second one the groups of files using it the most
@@ -289,3 +297,5 @@ def not_unimportant_words_used_by_all_groups(tf_idf, groups_of_files):
     if not_unimportant_words_used_by_all == []:
         return None
     return not_unimportant_words_used_by_all
+
+
