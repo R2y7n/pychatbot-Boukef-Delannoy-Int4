@@ -63,7 +63,7 @@ def create_cleaned_files(directory):
             file.close()
             os.remove("cleaned\\" + filename)
             file = open("cleaned\\" + "lower_casely_cleaned_" + filename, "r", encoding = "utf-8")
-            remove_punctuation(file, filename)
+            remove_punctuation_and_special_character(file, filename)
             file.close()
             os.remove("cleaned\\" + "lower_casely_cleaned_" + filename)
     return "./cleaned"
@@ -82,7 +82,7 @@ def lower_case_convert(file, filename):
                 lower_cased_file.write(character)
     lower_cased_file.close()
 
-def remove_punctuation(file, filename):
+def remove_punctuation_and_special_character(file, filename):
     #create a copy of a file without any form of punctuation, number or symbol
     #possibility of improvement by removing after_space variable
     texte = file.readlines()
@@ -90,13 +90,9 @@ def remove_punctuation(file, filename):
     punctuation_removed_file = open("cleaned\\" + "cleaned_" + filename, "w", encoding = "utf-8")
     for lines in texte:
         for character in lines:
-            if ord(character) <= 31 or 33 <= ord(character) <= 64 or 91 <= ord(character) <= 96 or 123 <= ord(character) <= 127:
+            if ord(character) <= 64 or 91 <= ord(character) <= 96 or 123 <= ord(character) <= 127:
                 if after_space == False:
                     punctuation_removed_file.write(" ")
-                    after_space = True
-            elif ord(character) <= 32:
-                if after_space == False:
-                    punctuation_removed_file.write(character)
                     after_space = True
             else:
                 punctuation_removed_file.write(character)
