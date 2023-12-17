@@ -376,3 +376,31 @@ def tf_idf_terms_vectors(intersections_question_corpus, idf):
     for word in idf:
         terms_vectors.append(tf_intersections_question_corpus.get(word, 0)*idf[word])
     return terms_vectors
+
+def tf_idf_terms_vectors(intersections_question_corpus, idf):
+    #create a list containing vectors for each word depending on the TF of the question words and the IDF of the words
+    terms_vectors = []
+    tf_intersections_question_corpus = tf_of_intersections_question_corpus(intersections_question_corpus)
+    for word in idf:
+        terms_vectors.append(tf_intersections_question_corpus.get(word, 0)*idf[word])
+    return terms_vectors
+
+def dot_function_of_two_vectors(vector1, vector2):
+    #compute the dot product of two vectors
+    dot_product = 0
+    for dimension in range(len(vector1)):
+        dot_product = dot_product + vector1[dimension]*vector2[dimension]
+    return dot_product
+
+def norm_vector(vector):
+    #compute the norm of a vector
+    norm = 0
+    for dimension in range(len(vector)):
+        norm = norm + vector[dimension]**2
+    norm = math.sqrt(norm)
+    return norm
+
+def calculating_similarity_between_two_vectors(vector1, vector2):
+    #compute the similarity of two vectors by finding the cosine of their angle
+    cosine_similarity = dot_function_of_two_vectors(vector1, vector2)/(norm_vector(vector1)*norm_vector(vector2))
+    return cosine_similarity

@@ -115,3 +115,4 @@ if __name__ == '__main__':
             print(tf_intersections_question_corpus)
             terms_vectors = tf_idf_terms_vectors(intersections_question_corpus, idf)
             print(terms_vectors)
+            #4 Calculating similarity
