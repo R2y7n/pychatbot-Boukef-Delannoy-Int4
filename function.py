@@ -369,21 +369,13 @@ def tf_of_intersections_question_corpus(intersections_question_corpus):
         tf_intersections_question_corpus[word] = tf_intersections_question_corpus[word]/len(intersections_question_corpus)
     return tf_intersections_question_corpus
 
-def tf_idf_terms_vectors(intersections_question_corpus, idf):
-    #create a list containing vectors for each word depending on the TF of the question words and the IDF of the words
-    terms_vectors = []
+def tf_idf_question_vector(intersections_question_corpus, idf):
+    #create a vector for the question depending on the TF of the intersections question corpus and the IDF
+    question_vector = []
     tf_intersections_question_corpus = tf_of_intersections_question_corpus(intersections_question_corpus)
     for word in idf:
-        terms_vectors.append(tf_intersections_question_corpus.get(word, 0)*idf[word])
-    return terms_vectors
-
-def tf_idf_terms_vectors(intersections_question_corpus, idf):
-    #create a list containing vectors for each word depending on the TF of the question words and the IDF of the words
-    terms_vectors = []
-    tf_intersections_question_corpus = tf_of_intersections_question_corpus(intersections_question_corpus)
-    for word in idf:
-        terms_vectors.append(tf_intersections_question_corpus.get(word, 0)*idf[word])
-    return terms_vectors
+        question_vector.append(tf_intersections_question_corpus.get(word, 0)*idf[word])
+    return question_vector
 
 def dot_function_of_two_vectors(vector1, vector2):
     #compute the dot product of two vectors
