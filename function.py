@@ -458,7 +458,6 @@ def first_sentence_word_in_file(filename, target_word):
     target_word_in_sentence = False
     for line in lines:
         for character in line:
-            sentence = sentence + character
             if 65 <= ord(character) <= 90 or 97 <= ord(character) <= 122 or 128 <= ord(character):
                 if in_word == False:
                     word_number = word_number + 1
@@ -471,6 +470,8 @@ def first_sentence_word_in_file(filename, target_word):
                 if target_word_in_sentence == True:
                     return sentence
                 sentence = ""
+            else:
+                sentence = sentence + character
 
 def first_sentence_highest_tf_idf_words_in_documents(most_relevant_documents, highest_tf_idf_question_words):
     #return the first sentence containing one of the word with the highest TF-IDF in the most relevant documents
