@@ -106,9 +106,9 @@ if __name__ == '__main__':
             intersections_question_corpus = words_in_question_and_corpus(question_words, tf_idf)
             print(intersections_question_corpus)
             #to call TF-IDF matrix
-            """corpus_words = corpus_words_list(files_names)
+            corpus_words = corpus_words_list(files_names)
             tf_idf_matrix = tf_idf_matrix_of_corpus(corpus_words, tf_idf)
-            print(tf_idf_matrix)"""
+            print(tf_idf_matrix)
             #3 Calculate the TF-IDF vector for the terms in question
             print(idf)
             tf_intersections_question_corpus = tf_of_intersections_question_corpus(intersections_question_corpus)
@@ -116,3 +116,9 @@ if __name__ == '__main__':
             question_vector = tf_idf_question_vector(intersections_question_corpus, idf)
             print(question_vector)
             #4 Calculating similarity
+            #5 Calculating the most relevant document
+            most_relevant_documents = most_relevant_documents_list(tf_idf_matrix, question_vector, files_names)
+            if most_relevant_documents == None:
+                print("no words of the question are apearing in the document or all the words of the question that are appearing in the documents are appearing in all the documents")
+            else:
+                print(most_relevant_documents)

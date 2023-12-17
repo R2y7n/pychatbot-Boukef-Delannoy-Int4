@@ -83,17 +83,24 @@ def lower_case_convert(file, filename):
     lower_cased_file.close()
 
 def remove_punctuation_and_special_character(file, filename):
-    # create a copy of file without punctuation, number, and symbol
+    #create a copy of a file without any form of punctuation, number or symbol
+    #possibility of improvement by removing after_space variable
     texte = file.readlines()
-    cleaned_file_path = "cleaned\\cleaned_" + filename
-    with open(cleaned_file_path, "w", encoding="utf-8") as cleaned_file:
-        for line in texte:
-            cleaned_line = ''.join(char for char in line if char.isalpha() or char.isspace())
-            cleaned_file.write(cleaned_line)
-
+    after_space = True
+    punctuation_removed_file = open("cleaned\\" + "cleaned_" + filename, "w", encoding = "utf-8")
+    for lines in texte:
+        for character in lines:
+            if ord(character) <= 64 or 91 <= ord(character) <= 96 or 123 <= ord(character) <= 127:
+                if after_space == False:
+                    punctuation_removed_file.write(" ")
+                    after_space = True
+            else:
+                punctuation_removed_file.write(character)
+                after_space = False
+    punctuation_removed_file.close()
 
 def unimportant_words_in_files(tf_idf, groups_of_files):
-    #create a list containing the words used in all the groups of files
+    #create a list containing the unimportant words with regard to the groups of files used
     if groups_of_files == "directory":
         unimportant_words = tf_idf_0(tf_idf)
     else:
@@ -103,21 +110,25 @@ def unimportant_words_in_files(tf_idf, groups_of_files):
     return unimportant_words
 
 def unimportant_words_by_groups(tf_idf, groups_of_files):
-    # Create a list of words used in all file groups
-    if not groups_of_files:
-        return []
-
-    # Initialize with words from first group of files
-    initial_group = next(iter(groups_of_files.values()))
-    unimportant_words = set(tf_idf.get(filename, {}).keys() for filename in initial_group)
-
-    # Find the intersection of words with other file groups
-    for filenames in groups_of_files.values():
-        current_group_words = set(tf_idf.get(filename, {}).keys() for filename in filenames)
-        unimportant_words = unimportant_words.intersection(current_group_words)
-
-    return list(unimportant_words)
-
+    #create a list containing the words used in all the groups of files
+    #if the type of the TF-IDF was changed to matrix we could probably use simply a list directly instead of having to use a dictionary
+    unimportant_words = []
+    first_group_check = True
+    for group_of_files in groups_of_files:
+        still_unimportant_words = []
+        for filename in groups_of_files[group_of_files]:
+            if first_group_check == True:
+                for word in tf_idf[filename]:
+                    if word not in unimportant_words:
+                        unimportant_words.append(word)
+            else:
+                for word in unimportant_words:
+                    if word in tf_idf[filename] and word not in still_unimportant_words:
+                        still_unimportant_words.append(word)
+        if first_group_check == False:
+            unimportant_words = still_unimportant_words
+        first_group_check = False
+    return unimportant_words
 
 def most_repeated_not_unimportant_words_in_group_of_files(tf_idf, groups_of_files, name_of_group):
     #create a list containing the most repeated words in the group of files
@@ -189,7 +200,6 @@ def groups_of_files_by_name(file_names, list_of_names):
     #Here's an optimized version of the function.
     return {name: [filename for filename in file_names if name in filename] for name in list_of_names}
 
-
 def tf_idf_0(tf_idf):
     #create a list containing the unimportant words
     unimportant_words = []
@@ -253,7 +263,6 @@ def groups_of_files_using_word(groups_of_files, target_word):
     most_repeated = [group for group, count in occurrences_by_group_of_files.items() if count == max_occurrences]
 
     return groups_using_target_word, most_repeated
-
 
 def first_to_use(groups_of_files, target_word):
     #return the name of the first author using the target word if there is one and None if there is none
@@ -375,7 +384,32 @@ def norm_vector(vector):
     norm = math.sqrt(norm)
     return norm
 
-def calculating_similarity_between_two_vectors(vector1, vector2):
+def similarity_between_two_vectors(vector1, vector2):
     #compute the similarity of two vectors by finding the cosine of their angle
+    if norm_vector(vector1) == 0:
+        return None
     cosine_similarity = dot_function_of_two_vectors(vector1, vector2)/(norm_vector(vector1)*norm_vector(vector2))
     return cosine_similarity
+
+def equivalent_cleaned_doc_speeches(filename):
+    speeches_equivalent = ""
+    for character_number in range(8, len(filename)):
+        speeches_equivalent = speeches_equivalent + filename[character_number]
+    return speeches_equivalent
+
+def most_relevant_documents_list(tf_idf_matrix, question_vector, files_names):
+    #find the most relevant document by computing the similarities between the question vector and the documents vectors
+    max_similarity = []
+    max_similarity_value = 0
+    for file_number in range(len(files_names)):
+        similarity = similarity_between_two_vectors(question_vector, tf_idf_matrix[file_number])
+        if similarity == None:
+            return None
+        if similarity > max_similarity_value:
+            max_similarity = [files_names[file_number]]
+            max_similarity_value = similarity
+        elif similarity == max_similarity_value:
+            max_similarity.append(files_names[file_number])
+    for file_number in range(len(max_similarity)):
+        max_similarity[file_number] = equivalent_cleaned_doc_speeches(max_similarity[file_number])
+    return max_similarity
