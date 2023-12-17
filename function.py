@@ -434,3 +434,54 @@ def highest_tf_idf_question(corpus_words, question_vector):
 def equivalent_speeches_doc_cleaned(filename):
     #give the equivalent of a speeches file int the cleaned directory
     return "cleaned_" + filename
+
+def first_occurrence_word_in_cleaned_file(filename, target_word):
+    #return the word number of the fist occurrence of a word in a file
+    cleaned_file = open("cleaned\\" + equivalent_speeches_doc_cleaned(filename), "r", encoding="utf-8")
+    file_words = words_of_file(cleaned_file)
+    cleaned_file.close()
+    for file_word_number in range(len(file_words)):
+        if file_words[file_word_number] == target_word:
+            return file_word_number
+    return None
+
+def first_sentence_word_in_file(filename, target_word):
+    #return the first sentence containing a word in a file
+    target_word_number = first_occurrence_word_in_cleaned_file(filename, target_word)
+    if target_word_number == None:
+        return None
+    file = open("speeches\\" + filename, "r", encoding="utf-8")
+    lines = file.readlines()
+    file.close()
+    sentence = ""
+    in_word = False
+    word_number = -1
+    target_word_in_sentence = False
+    for line in lines:
+        for character in line:
+            sentence = sentence + character
+            if 65 <= ord(character) <= 90 or 97 <= ord(character) <= 122 or 128 <= ord(character):
+                if in_word == False:
+                    word_number = word_number + 1
+                    in_word = True
+            else:
+                in_word = False
+            if word_number == target_word_number:
+                target_word_in_sentence = True
+            if ord(character) <= 31 or ord(character) == 46 or ord(character) == 63 or ord(character) == 127:
+                if target_word_in_sentence == True:
+                    return sentence
+                sentence = ""
+
+def first_sentences_highest_tf_idf_words_in_documents(most_relevant_documents, highest_tf_idf_question_words):
+    #create a matrix containing for each relevant document the first sentences containing each words with the highest TF-IDF in the question
+    sentences = []
+    for file_number in range(len(most_relevant_documents)):
+        sentences.append([])
+        for word in highest_tf_idf_question_words:
+            sentences[file_number].append(first_sentence_word_in_file(most_relevant_documents[file_number], word))
+    for file_number in range(len(sentences)):
+        for word_number in range(len(sentences[file_number])):
+            if sentences[file_number][word_number] == None:
+                sentences[file_number][word_number] = f'"{highest_tf_idf_question_words[word_number]}" does not appear in "{most_relevant_documents[file_number]}"'
+    return sentences
