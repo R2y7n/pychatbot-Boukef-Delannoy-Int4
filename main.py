@@ -1,7 +1,7 @@
 from function import *
 
 if __name__ == '__main__':
-    #president part
+    #part 1
     #we could rearrange the order of the calls of the functions here to make it more clean
     directory = "./speeches"
     #if the code has already been executed no need to execute it again
@@ -12,7 +12,7 @@ if __name__ == '__main__':
     files_names = list_of_files(clean_directory, "txt")
     dates_presidents = {"Giscard dEstaing": (1974, 1981), "Mitterrand": (1981, 1995), "Chirac": (1995, 2007), "Sarkozy": (2007, 2012), "Hollande": (2012, 2017), "Macron": (2017, 2022)}
     files_names, presidents_names = files_and_authors_names_by_dates(files_names, dates_presidents)
-    tf_idf = tf_idf_of_files(files_names)
+    tf_idf, idf = tf_idf_of_files(files_names)
     groups_of_files = groups_of_files_by_name(files_names, presidents_names)
     print("To quit, enter 0")
     print("To see the unimportant words in the document corpus, enter 1")
@@ -93,25 +93,25 @@ if __name__ == '__main__':
             print("The words that all presidents have pronounced but that did not appears in all of their speeches are: ")
             print(words_used_by_all_but_not_all_speeches)
 
-    #question part
-    questions_directory = "./questions"
-    for filename in os.listdir(questions_directory):
-        if os.path.isfile(os.path.join(questions_directory, filename)):
-            os.remove(os.path.join(questions_directory, filename))
+    #part 2
     user_choice = None
-    question_number = 1
     question = None
     while user_choice != 0 and question != "quit":
         question = input("Ask a question (if you want to quit enter quit): ")
         if question != "quit":
-            create_question_file(questions_directory, question, str(question_number))
-            cleaned_questions_directory = create_cleaned_questions(questions_directory)
-            tf_idf_questions = tf_idf_of_questions(question_number)
-            print("To quit, enter 0")
-            print("To have tf-idf of questions, enter 1")
-            print()
-            user_choice = int(input())
-            print()
-            if user_choice == 1:
-                print(tf_idf_questions)
-            question_number = question_number + 1
+            #1 Question tokenization
+            question_words = list_words_in_question(question)
+            print(question_words)
+            #2 Search for the question words in the Corpus
+            intersections_question_corpus = words_in_question_and_corpus(question_words, tf_idf)
+            print(intersections_question_corpus)
+            #to call TF-IDF matrix
+            """corpus_words = corpus_words_list(files_names)
+            tf_idf_matrix = tf_idf_matrix_of_corpus(corpus_words, tf_idf)
+            print(tf_idf_matrix)"""
+            #3 Calculate the TF-IDF vector for the terms in question
+            print(idf)
+            tf_intersections_question_corpus = tf_of_intersections_question_corpus(intersections_question_corpus)
+            print(tf_intersections_question_corpus)
+            terms_vectors = tf_idf_terms_vectors(intersections_question_corpus, idf)
+            print(terms_vectors)
