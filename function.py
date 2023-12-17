@@ -83,24 +83,17 @@ def lower_case_convert(file, filename):
     lower_cased_file.close()
 
 def remove_punctuation_and_special_character(file, filename):
-    #create a copy of a file without any form of punctuation, number or symbol
-    #possibility of improvement by removing after_space variable
+    # create a copy of file without punctuation, number, and symbol
     texte = file.readlines()
-    after_space = True
-    punctuation_removed_file = open("cleaned\\" + "cleaned_" + filename, "w", encoding = "utf-8")
-    for lines in texte:
-        for character in lines:
-            if ord(character) <= 64 or 91 <= ord(character) <= 96 or 123 <= ord(character) <= 127:
-                if after_space == False:
-                    punctuation_removed_file.write(" ")
-                    after_space = True
-            else:
-                punctuation_removed_file.write(character)
-                after_space = False
-    punctuation_removed_file.close()
+    cleaned_file_path = "cleaned\\cleaned_" + filename
+    with open(cleaned_file_path, "w", encoding="utf-8") as cleaned_file:
+        for line in texte:
+            cleaned_line = ''.join(char for char in line if char.isalpha() or char.isspace())
+            cleaned_file.write(cleaned_line)
+
 
 def unimportant_words_in_files(tf_idf, groups_of_files):
-    #create a list containing the unimportant words with regard to the groups of files used
+    #create a list containing the words used in all the groups of files
     if groups_of_files == "directory":
         unimportant_words = tf_idf_0(tf_idf)
     else:
@@ -110,51 +103,47 @@ def unimportant_words_in_files(tf_idf, groups_of_files):
     return unimportant_words
 
 def unimportant_words_by_groups(tf_idf, groups_of_files):
-    #create a list containing the words used in all the groups of files
-    #if the type of the TF-IDF was changed to matrix we could probably use simply a list directly instead of having to use a dictionary
-    unimportant_words = []
-    first_group_check = True
-    for group_of_files in groups_of_files:
-        still_unimportant_words = []
-        for filename in groups_of_files[group_of_files]:
-            if first_group_check == True:
-                for word in tf_idf[filename]:
-                    if word not in unimportant_words:
-                        unimportant_words.append(word)
-            else:
-                for word in unimportant_words:
-                    if word in tf_idf[filename] and word not in still_unimportant_words:
-                        still_unimportant_words.append(word)
-        if first_group_check == False:
-            unimportant_words = still_unimportant_words
-        first_group_check = False
-    return unimportant_words
+    # Create a list of words used in all file groups
+    if not groups_of_files:
+        return []
 
-def most_repeated_not_unimportant_words_in_group_of_files(tf_idf, groups_of_files, name_of_groupe):
+    # Initialize with words from first group of files
+    initial_group = next(iter(groups_of_files.values()))
+    unimportant_words = set(tf_idf.get(filename, {}).keys() for filename in initial_group)
+
+    # Find the intersection of words with other file groups
+    for filenames in groups_of_files.values():
+        current_group_words = set(tf_idf.get(filename, {}).keys() for filename in filenames)
+        unimportant_words = unimportant_words.intersection(current_group_words)
+
+    return list(unimportant_words)
+
+
+def most_repeated_not_unimportant_words_in_group_of_files(tf_idf, groups_of_files, name_of_group):
     #create a list containing the most repeated words in the group of files
-    #if after_space is remove from remove_punctuation_and_special_character don't forget to adapt here too
-    group_of_files = groups_of_files[name_of_groupe]
+    group_of_files = groups_of_files[name_of_group]
     occurrences = {}
-    for filename in group_of_files:
-        file = open("cleaned\\" + filename, "r", encoding = "utf-8")
-        words = words_of_file(file)
-        file.close()
-        for word in range(len(words)):
-            occurrences[words[word]] = occurrences.get(words[word], 0) + 1
-    most_repeated_words = []
-    most_repeated_words_occurrences = 0
     unimportant_words = unimportant_words_in_files(tf_idf, "directory")
-    for word in occurrences:
-        if occurrences[word] == most_repeated_words_occurrences and word not in unimportant_words:
-            most_repeated_words.append(word)
-        elif occurrences[word] > most_repeated_words_occurrences and word not in unimportant_words:
-            most_repeated_words_occurrences = occurrences[word]
-            most_repeated_words = [word]
+
+    for filename in group_of_files:
+        with open("cleaned\\" + filename, "r", encoding="utf-8") as file:
+            words = words_of_file(file)
+            for word in words:
+                if word not in unimportant_words:
+                    occurrences[word] = occurrences.get(word, 0) + 1
+
+    if not occurrences:
+        return None
+
+    # find the most repeated word
+    max_occurrences = max(occurrences.values())
+    most_repeated_words = [word for word, count in occurrences.items() if count == max_occurrences]
+
     print(unimportant_words)
     print(most_repeated_words)
-    if most_repeated_words == []:
-        return None
+
     return most_repeated_words
+
 
 """3. Analysis and Treatment of Textual Datas"""
 
@@ -196,14 +185,10 @@ def tf_idf_of_files(files_names):
     return tf_idf, idf
 
 def groups_of_files_by_name(file_names, list_of_names):
-    #create a dictionary containing lists of files grouped by name of the author
-    #could maybe be simplified considering the fact file_name is already sorted in the same order as list_of_names
-    groups_of_files = {name: [] for name in list_of_names}
-    for name in list_of_names:
-        for filename in file_names:
-            if name in filename:
-                groups_of_files[name].append(filename)
-    return groups_of_files
+    # create a dictionary containing lists of files grouped by name of the author
+    #Here's an optimized version of the function.
+    return {name: [filename for filename in file_names if name in filename] for name in list_of_names}
+
 
 def tf_idf_0(tf_idf):
     #create a list containing the unimportant words
@@ -246,31 +231,29 @@ def highest_tf_idf(tf_idf):
     return highest_tf_idf_words
 
 def groups_of_files_using_word(groups_of_files, target_word):
-    #create two lists, the first one containing all the groups of files using the target word and the second one the groups of files using it the most
-    #if after_space is remove from remove_punctuation_and_special_character don't forget to adapt here too
+    # Créer deux listes : une pour les groupes de fichiers utilisant le mot cible, l'autre pour ceux l'utilisant le plus
     occurrences_by_group_of_files = {}
-    for group_of_files in groups_of_files:
-        for filename in groups_of_files[group_of_files]:
-            file = open("cleaned\\" + filename, "r", encoding = "utf-8")
-            words = words_of_file(file)
-            file.close()
-            for word in range(len(words)):
-                if words[word] == target_word:
-                    occurrences_by_group_of_files[group_of_files] = occurrences_by_group_of_files.get(group_of_files, 0) + 1
-    groups_of_files_using_target_word = []
-    most_repeated = []
-    most_repeated_occurrences = 0
-    for group_of_files in groups_of_files:
-        if group_of_files in occurrences_by_group_of_files:
-            groups_of_files_using_target_word.append(group_of_files)
-            if occurrences_by_group_of_files[group_of_files] == most_repeated_occurrences:
-                most_repeated.append(occurrences_by_group_of_files[group_of_files])
-            elif occurrences_by_group_of_files[group_of_files] > most_repeated_occurrences:
-                most_repeated_occurrences = occurrences_by_group_of_files[group_of_files]
-                most_repeated = [group_of_files]
-    if groups_of_files_using_target_word == []:
+
+    # Compter les occurrences du mot cible dans chaque groupe de fichiers
+    for group_name, filenames in groups_of_files.items():
+        count = 0
+        for filename in filenames:
+            with open("cleaned\\" + filename, "r", encoding="utf-8") as file:
+                words = words_of_file(file)
+                count += words.count(target_word)
+        if count > 0:
+            occurrences_by_group_of_files[group_name] = count
+
+    if not occurrences_by_group_of_files:
         return None, None
-    return groups_of_files_using_target_word, most_repeated
+
+    # Séparer les groupes utilisant le mot cible de ceux l'utilisant le plus
+    groups_using_target_word = list(occurrences_by_group_of_files.keys())
+    max_occurrences = max(occurrences_by_group_of_files.values())
+    most_repeated = [group for group, count in occurrences_by_group_of_files.items() if count == max_occurrences]
+
+    return groups_using_target_word, most_repeated
+
 
 def first_to_use(groups_of_files, target_word):
     #return the name of the first author using the target word if there is one and None if there is none
