@@ -360,7 +360,6 @@ def tf_of_intersections_question_corpus(question_words, intersections_question_c
             tf_intersections_question_corpus[word] = tf_intersections_question_corpus.get(word, 0) + 1
     for word in tf_intersections_question_corpus:
         tf_intersections_question_corpus[word] = tf_intersections_question_corpus[word]/len(question_words)
-    print(tf_intersections_question_corpus)
     return tf_intersections_question_corpus
 
 def tf_idf_question_vector(question_words, intersections_question_corpus, idf):
@@ -473,15 +472,11 @@ def first_sentence_word_in_file(filename, target_word):
                     return sentence
                 sentence = ""
 
-def first_sentences_highest_tf_idf_words_in_documents(most_relevant_documents, highest_tf_idf_question_words):
-    #create a matrix containing for each relevant document the first sentences containing each words with the highest TF-IDF in the question
-    sentences = []
+def first_sentence_highest_tf_idf_words_in_documents(most_relevant_documents, highest_tf_idf_question_words):
+    #return the first sentence containing one of the word with the highest TF-IDF in the most relevant documents
     for file_number in range(len(most_relevant_documents)):
-        sentences.append([])
         for word in highest_tf_idf_question_words:
-            sentences[file_number].append(first_sentence_word_in_file(most_relevant_documents[file_number], word))
-    for file_number in range(len(sentences)):
-        for word_number in range(len(sentences[file_number])):
-            if sentences[file_number][word_number] == None:
-                sentences[file_number][word_number] = f'"{highest_tf_idf_question_words[word_number]}" does not appear in "{most_relevant_documents[file_number]}"'
-    return sentences
+            sentence = first_sentence_word_in_file(most_relevant_documents[file_number], word)
+            if sentence != None:
+                return sentence
+    return None

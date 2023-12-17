@@ -130,5 +130,8 @@ if __name__ == '__main__':
                 print(highest_tf_idf_question_words)
                 for filename in most_relevant_documents:
                     print(equivalent_speeches_doc_cleaned(filename))
-                sentences_list = first_sentences_highest_tf_idf_words_in_documents(most_relevant_documents, highest_tf_idf_question_words)
-                print(sentences_list)
+                sentence = first_sentence_highest_tf_idf_words_in_documents(most_relevant_documents, highest_tf_idf_question_words)
+                if sentence == None:
+                    print("I'm sorry but I don't know the answer to that question.")
+                else:
+                    print(sentence)
