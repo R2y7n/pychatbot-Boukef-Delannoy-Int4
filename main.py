@@ -105,20 +105,28 @@ if __name__ == '__main__':
             #2 Search for the question words in the Corpus
             intersections_question_corpus = words_in_question_and_corpus(question_words, tf_idf)
             print(intersections_question_corpus)
+            #3 Calculate the TF-IDF vector for the terms in question
+            print(idf)
+            tf_intersections_question_corpus = tf_of_intersections_question_corpus(question_words, intersections_question_corpus)
+            print(tf_intersections_question_corpus)
+            question_vector = tf_idf_question_vector(question_words, intersections_question_corpus, idf)
+            print(question_vector)
+            #4 Calculating similarity
             #to call TF-IDF matrix
             corpus_words = corpus_words_list(files_names)
             tf_idf_matrix = tf_idf_matrix_of_corpus(corpus_words, tf_idf)
             print(tf_idf_matrix)
-            #3 Calculate the TF-IDF vector for the terms in question
-            print(idf)
-            tf_intersections_question_corpus = tf_of_intersections_question_corpus(intersections_question_corpus)
-            print(tf_intersections_question_corpus)
-            question_vector = tf_idf_question_vector(intersections_question_corpus, idf)
-            print(question_vector)
-            #4 Calculating similarity
             #5 Calculating the most relevant document
             most_relevant_documents = most_relevant_documents_list(tf_idf_matrix, question_vector, files_names)
             if most_relevant_documents == None:
                 print("no words of the question are apearing in the document or all the words of the question that are appearing in the documents are appearing in all the documents")
             else:
                 print(most_relevant_documents)
+            #6 Generating a response
+            highest_tf_idf_question_words = highest_tf_idf_question(corpus_words, question_vector)
+            if highest_tf_idf_question_words == None:
+                print("no words of the question are apearing in the document or all the words of the question that are appearing in the documents are appearing in all the documents")
+            else:
+                print(highest_tf_idf_question_words)
+                for filename in most_relevant_documents:
+                    print(equivalent_speeches_doc_cleaned(filename))

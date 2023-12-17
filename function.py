@@ -351,20 +351,22 @@ def tf_idf_matrix_of_corpus(corpus_words, tf_idf):
         file_number = file_number + 1
     return tf_idf_matrix
 
-def tf_of_intersections_question_corpus(intersections_question_corpus):
+def tf_of_intersections_question_corpus(question_words, intersections_question_corpus):
     #create a dictionary containing the TF (Term Frequency) of the question
     #if after_space is remove from remove_punctuation_and_special_character don't forget to adapt here too
     tf_intersections_question_corpus = {}
-    for word in intersections_question_corpus:
-        tf_intersections_question_corpus[word] = tf_intersections_question_corpus.get(word, 0) + 1
+    for word in question_words:
+        if word in intersections_question_corpus:
+            tf_intersections_question_corpus[word] = tf_intersections_question_corpus.get(word, 0) + 1
     for word in tf_intersections_question_corpus:
-        tf_intersections_question_corpus[word] = tf_intersections_question_corpus[word]/len(intersections_question_corpus)
+        tf_intersections_question_corpus[word] = tf_intersections_question_corpus[word]/len(question_words)
+    print(tf_intersections_question_corpus)
     return tf_intersections_question_corpus
 
-def tf_idf_question_vector(intersections_question_corpus, idf):
+def tf_idf_question_vector(question_words, intersections_question_corpus, idf):
     #create a vector for the question depending on the TF of the intersections question corpus and the IDF
     question_vector = []
-    tf_intersections_question_corpus = tf_of_intersections_question_corpus(intersections_question_corpus)
+    tf_intersections_question_corpus = tf_of_intersections_question_corpus(question_words, intersections_question_corpus)
     for word in idf:
         question_vector.append(tf_intersections_question_corpus.get(word, 0)*idf[word])
     return question_vector
@@ -392,6 +394,7 @@ def similarity_between_two_vectors(vector1, vector2):
     return cosine_similarity
 
 def equivalent_cleaned_doc_speeches(filename):
+    #give the equivalent of a cleaned file int the speeches directory
     speeches_equivalent = ""
     for character_number in range(8, len(filename)):
         speeches_equivalent = speeches_equivalent + filename[character_number]
@@ -413,3 +416,21 @@ def most_relevant_documents_list(tf_idf_matrix, question_vector, files_names):
     for file_number in range(len(max_similarity)):
         max_similarity[file_number] = equivalent_cleaned_doc_speeches(max_similarity[file_number])
     return max_similarity
+
+def highest_tf_idf_question(corpus_words, question_vector):
+    #create a list containing the words with the highest TF-IDF in the question
+    highest_tf_idf_question_words = []
+    highest_tf_idf_question_words_value = 0
+    for word_number in range(len(corpus_words)):
+        if question_vector[word_number] > highest_tf_idf_question_words_value:
+            highest_tf_idf_question_words = [corpus_words[word_number]]
+            highest_tf_idf_question_words_value = question_vector[word_number]
+        elif question_vector[word_number] == highest_tf_idf_question_words_value:
+            highest_tf_idf_question_words.append(corpus_words[word_number])
+    if highest_tf_idf_question_words_value == 0:
+        return None
+    return highest_tf_idf_question_words
+
+def equivalent_speeches_doc_cleaned(filename):
+    #give the equivalent of a speeches file int the cleaned directory
+    return "cleaned_" + filename
