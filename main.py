@@ -113,5 +113,6 @@ if __name__ == '__main__':
             print(idf)
             tf_intersections_question_corpus = tf_of_intersections_question_corpus(intersections_question_corpus)
             print(tf_intersections_question_corpus)
-            terms_vectors = tf_idf_terms_vectors(intersections_question_corpus, idf)
-            print(terms_vectors)
+            question_vector = tf_idf_question_vector(intersections_question_corpus, idf)
+            print(question_vector)
+            #4 Calculating similarity
