@@ -150,9 +150,6 @@ def most_repeated_not_unimportant_words_in_group_of_files(tf_idf, groups_of_file
     max_occurrences = max(occurrences.values())
     most_repeated_words = [word for word, count in occurrences.items() if count == max_occurrences]
 
-    print(unimportant_words)
-    print(most_repeated_words)
-
     return most_repeated_words
 
 
@@ -485,11 +482,10 @@ def first_sentence_highest_tf_idf_words_in_documents(question_words, most_releva
 
 def refined_answer(question_words, sentence):
     question_starters = {"comment": "Après analyse, ", "pourquoi": "Car, ", "peux tu": "Oui, bien sûr! "}
-    character_number = 0
-    characters_to_remove = ""
-    while ord(sentence[character_number]) <= 64 or 91 <= ord(sentence[character_number]) <= 96 or 123 <= ord(sentence[character_number]) <= 127:
-        characters_to_remove = sentence[character_number]
-    for character in characters_to_remove:
+    number_characters_to_remove = 0
+    while ord(sentence[number_characters_to_remove]) <= 64 or 91 <= ord(sentence[number_characters_to_remove]) <= 96 or 123 <= ord(sentence[number_characters_to_remove]) <= 127:
+        number_characters_to_remove = number_characters_to_remove + 1
+    for character_number in range(number_characters_to_remove):
         sentence = sentence[1:]
     if question_words[0] in question_starters:
         sentence = lower_case_convert_sentence(sentence)
