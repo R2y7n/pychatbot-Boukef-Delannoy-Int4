@@ -1,4 +1,4 @@
-import os
+dimport os
 import math
 #we could rearrange the order of the functions here to make it more clean
 

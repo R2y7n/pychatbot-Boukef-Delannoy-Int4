@@ -1,4 +1,4 @@
-import sys
+dimport sys
 from function import *
 
 if __name__ == '__main__':
