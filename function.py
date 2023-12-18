@@ -288,15 +288,15 @@ def not_unimportant_words_used_by_all_groups(tf_idf, groups_of_files):
 
 #question part
 
-def lower_case_convert_question(question):
-    #create a copy of the question with all capital letters convert to lower case
-    lower_cased_question = ""
-    for character in question:
+def lower_case_convert_sentence(sentence):
+    #create a copy of a sentence with all capital letters convert to lower case
+    lower_cased_sentence = ""
+    for character in sentence:
         if 65 <= ord(character) <= 90:
-            lower_cased_question = lower_cased_question + chr(ord(character) + 32)
+            lower_cased_sentence = lower_cased_sentence + chr(ord(character) + 32)
         else:
-            lower_cased_question = lower_cased_question + character
-    return lower_cased_question
+            lower_cased_sentence = lower_cased_sentence + character
+    return lower_cased_sentence
 
 def remove_punctuation_and_special_character_question(question):
     #create a copy of the question without any form of punctuation, number or symbol
@@ -315,7 +315,7 @@ def remove_punctuation_and_special_character_question(question):
 
 def list_words_in_question(question):
     #create a list containing the words of the question
-    question_words = lower_case_convert_question(question)
+    question_words = lower_case_convert_sentence(question)
     question_words = remove_punctuation_and_special_character_question(question_words)
     question_words = question_words.split()
     return question_words
@@ -479,5 +479,22 @@ def first_sentence_highest_tf_idf_words_in_documents(question_words, most_releva
         for word in highest_tf_idf_question_words:
             sentence = first_sentence_word_in_file(most_relevant_documents[file_number], word)
             if sentence != None:
+                sentence = refined_answer(question_words, sentence)
                 return sentence
     return None
+
+def refined_answer(question_words, sentence):
+    question_starters = {"comment": "Après analyse, ", "pourquoi": "Car, ", "peux tu": "Oui, bien sûr! "}
+    character_number = 0
+    characters_to_remove = ""
+    while ord(sentence[character_number]) <= 64 or 91 <= ord(sentence[character_number]) <= 96 or 123 <= ord(sentence[character_number]) <= 127:
+        characters_to_remove = sentence[character_number]
+    for character in characters_to_remove:
+        sentence = sentence[1:]
+    if question_words[0] in question_starters:
+        sentence = lower_case_convert_sentence(sentence)
+        sentence = question_starters[question_words[0]] + sentence + "."
+    if len(question_words) >= 2:
+        if question_words[0] + " " + question_words[1] in question_starters:
+            sentence = question_starters[question_words[0] + " " + question_words[1]] + sentence + "."
+    return sentence
