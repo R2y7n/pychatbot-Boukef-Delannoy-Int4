@@ -473,7 +473,7 @@ def first_sentence_word_in_file(filename, target_word):
             else:
                 sentence = sentence + character
 
-def first_sentence_highest_tf_idf_words_in_documents(most_relevant_documents, highest_tf_idf_question_words):
+def first_sentence_highest_tf_idf_words_in_documents(question_words, most_relevant_documents, highest_tf_idf_question_words):
     #return the first sentence containing one of the word with the highest TF-IDF in the most relevant documents
     for file_number in range(len(most_relevant_documents)):
         for word in highest_tf_idf_question_words:
@@ -481,5 +481,3 @@ def first_sentence_highest_tf_idf_words_in_documents(most_relevant_documents, hi
             if sentence != None:
                 return sentence
     return None
-
-"""comment for Ryan to update"""
