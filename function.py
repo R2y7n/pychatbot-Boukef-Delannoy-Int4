@@ -238,10 +238,10 @@ def highest_tf_idf(tf_idf):
     return highest_tf_idf_words
 
 def groups_of_files_using_word(groups_of_files, target_word):
-    # Créer deux listes : une pour les groupes de fichiers utilisant le mot cible, l'autre pour ceux l'utilisant le plus
+    # Create two lists: one for groups of files using the target word, the other for those using it the most
     occurrences_by_group_of_files = {}
 
-    # Compter les occurrences du mot cible dans chaque groupe de fichiers
+    # Count the occurrences of the target word in each file group
     for group_name, filenames in groups_of_files.items():
         count = 0
         for filename in filenames:
@@ -254,7 +254,7 @@ def groups_of_files_using_word(groups_of_files, target_word):
     if not occurrences_by_group_of_files:
         return None, None
 
-    # Séparer les groupes utilisant le mot cible de ceux l'utilisant le plus
+    # Separate groups using the target word from those using it the most
     groups_using_target_word = list(occurrences_by_group_of_files.keys())
     max_occurrences = max(occurrences_by_group_of_files.values())
     most_repeated = [group for group, count in occurrences_by_group_of_files.items() if count == max_occurrences]
