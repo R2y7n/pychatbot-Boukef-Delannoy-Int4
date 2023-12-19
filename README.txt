@@ -16,12 +16,15 @@ The primary goal of our project is to develop a chatbot that leverages the TF-ID
 
 TF-IDF (Term Frequency-Inverse Document Frequency) is a method widely used in natural language processing and information retrieval to evaluate the importance of a word in a document relative to a collection of documents (corpus).
 
+the second part of this project involves the creation of a chatbot in Python, named "M.Bot", designed to answer user queries in an interactive and informative way. It uses natural language processing techniques to analyze and respond to queries.
+
 ##Main functionalities
 
 - **Speeches**: Contains the dataset of presidential speeches.
 - **cleaned**: The cleaned version of the dataset will be stored here.
 - **function**: contains function required to the project
 -**main**: contains de main code
+-**Natural language processing**: uses algorithms to understand and respond to queries.User-friendly interface: easy to use for all levels of experience.
 
 
 ## Setup
@@ -48,5 +51,3 @@ pip install os
     │├─--function.py
     │├─README
     └──…
-
-
