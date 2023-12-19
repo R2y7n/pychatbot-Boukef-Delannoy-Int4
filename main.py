@@ -282,10 +282,10 @@ if __name__ == '__main__':
                         # here we calculate what are the most important words in the question
                         highest_tf_idf_question_words = highest_tf_idf_question(corpus_words, question_vector)
 
-                        # here we are generating a response to the question
+                        # here we are generating an answer to the question
                         sentence = first_sentence_highest_tf_idf_words_in_documents(question_words, most_relevant_documents, highest_tf_idf_question_words)
 
-                        # here we are checking if a response actually exist in the document because all the most important words could not at all in the most relevent documents and only apear in less relevant documents
+                        # here we are checking if an answer actually exist in the document because all the most important words could not at all in the most relevent documents and only apear in less relevant documents
                         # also M.Bot is just too much for us to understand
                         if sentence == None:
                             print("M.Bot : Tout ce que je peux vous dire, c'est que la pomme est un fruit sympatique.", end="\n\n")

@@ -90,7 +90,7 @@ def remove_punctuation_and_special_character(file, filename):
     punctuation_removed_file = open("cleaned\\" + "cleaned_" + filename, "w", encoding = "utf-8")
     for lines in texte:
         for character in lines:
-            if ord(character) <= 64 or 91 <= ord(character) <= 96 or 123 <= ord(character) <= 127:
+            if ord(character) <= 47 or 58 <= ord(character) <= 64 or 91 <= ord(character) <= 96 or 123 <= ord(character) <= 127:
                 if after_space == False:
                     punctuation_removed_file.write(" ")
                     after_space = True
@@ -301,7 +301,7 @@ def remove_punctuation_and_special_character_question(question):
     after_space = True
     punctuation_removed_question = ""
     for character in question:
-        if ord(character) <= 64 or 91 <= ord(character) <= 96 or 123 <= ord(character) <= 127:
+        if ord(character) <= 47 or 58 <= ord(character) <= 64 or 91 <= ord(character) <= 96 or 123 <= ord(character) <= 127:
             if after_space == False:
                 punctuation_removed_question = punctuation_removed_question + " "
                 after_space = True
@@ -455,7 +455,7 @@ def first_sentence_word_in_file(filename, target_word):
     target_word_in_sentence = False
     for line in lines:
         for character in line:
-            if 65 <= ord(character) <= 90 or 97 <= ord(character) <= 122 or 128 <= ord(character):
+            if 48 <= ord(character) <= 57 or 65 <= ord(character) <= 90 or 97 <= ord(character) <= 122 or 128 <= ord(character):
                 if in_word == False:
                     word_number = word_number + 1
                     in_word = True
@@ -483,7 +483,7 @@ def first_sentence_highest_tf_idf_words_in_documents(question_words, most_releva
 def refined_answer(question_words, sentence):
     question_starters = {"comment": "Après analyse, ", "pourquoi": "Car, ", "peux tu": "Oui, bien sûr! "}
     number_characters_to_remove = 0
-    while ord(sentence[number_characters_to_remove]) <= 64 or 91 <= ord(sentence[number_characters_to_remove]) <= 96 or 123 <= ord(sentence[number_characters_to_remove]) <= 127:
+    if ord(sentence[number_characters_to_remove]) <= 47 or 58 <= ord(sentence[number_characters_to_remove]) <= 64 or 91 <= ord(sentence[number_characters_to_remove]) <= 96 or 123 <= ord(sentence[number_characters_to_remove]) <= 127:
         number_characters_to_remove = number_characters_to_remove + 1
     for character_number in range(number_characters_to_remove):
         sentence = sentence[1:]
